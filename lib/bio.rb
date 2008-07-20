@@ -81,6 +81,9 @@ module Bio
   autoload :UniProt,        'bio/db/embl/uniprot'
   autoload :SwissProt,      'bio/db/embl/swissprot'
 
+  ## Microarray
+  autoload :Microarray,     'bio/db/microarray'
+
   ## KEGG
 
   class KEGG
