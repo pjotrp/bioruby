@@ -30,11 +30,7 @@ Editor: PjotrPrins <p .at. bioruby.org>
 * Copyright (C) 2001-2003 KATAYAMA Toshiaki <k .at. bioruby.org>
 * Copyright (C) 2005-2008 Pjotr Prins, Naohisa Goto and others
 
-The latest version resides in the CVS repository ./doc/((<Tutorial.rd|URL:http://cvs.open-bio.org/cgi-bin/viewcvs/viewcvs.cgi/*checkout*/bioruby/doc/Tutorial.rd?rev=HEAD&cvsroot=bioruby&content-type=text/plain>)). This one was updated:
-
-  $Id: Tutorial.rd,v 1.18 2008/02/05 12:01:16 pjotr Exp $ 
-
-in preparation for the ((<BioHackathlon 2008|URL:http://hackathon.dbcls.jp/>))
+The latest version resides in the GIT source code repository:  ./doc/((<Tutorial.rd|http://github.com/bioruby/bioruby/tree/master/doc/Tutorial.rd>)).
 
 == Introduction
 
@@ -465,7 +461,14 @@ database class?
     end
 
 An example that can take any input, filter using a regular expression to output
-to a FASTA file can be found in sample/any2fasta.rb.
+to a FASTA file can be found in sample/any2fasta.rb. With this technique it is
+possible to write a Unix type grep/sort pipe for sequence information. One
+example using scripts in the BIORUBY sample folder:
+
+ fastagrep.rb '/At|Dm/' database.seq | fastasort.rb
+
+greps the database for Arabidopsis and Drosophila entries and sorts the output
+to FASTA.
 
 Other methods to extract specific data from database objects can be
 different between databases, though some methods are common (see the
