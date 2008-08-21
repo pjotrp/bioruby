@@ -13,8 +13,9 @@ module Bio #:nodoc:
 
   module Microarray
 
-    autoload :AffyProbemap, 'bio/db/microarray/affyprobemap'
-    autoload :Affy, 'bio/db/microarray/affy'
+    autoload :GEO, 'bio/db/microarray/ncbi_geo/geo'
+    autoload :AffyProbemap, 'bio/db/microarray/affymetrix/affyprobemap'
+    autoload :Affy, 'bio/db/microarray/affymetrix/affy'
 
   end #class Microarray
 end #module Bio
