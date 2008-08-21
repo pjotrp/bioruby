@@ -11,8 +11,9 @@
 
 module Bio #:nodoc:
 
-  class Microarray
+  module Microarray
 
+    autoload :AffyProbemap, 'bio/db/microarray/affyprobemap'
     autoload :Affy, 'bio/db/microarray/affy'
 
   end #class Microarray
