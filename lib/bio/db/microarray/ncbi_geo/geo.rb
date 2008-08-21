@@ -37,10 +37,10 @@ module Bio
         def XML::parsexml acc
           if XML::isGEO? acc
             cache = ENV['BIORUBY_CACHE']
-            cache = '.' if not BIORUBY_CACHE
+            cache = '.' if not cache
             fn = cache+'/'+acc+'.xml'
             if !File.exist?(fn)
-              GEO::fetch(fn,acc)
+              XML::fetch(fn,acc)
             end
             $stderr.print "Reading #{fn}\n"
             return XmlSimple.xml_in(fn, { 'KeyAttr' => 'name' })
