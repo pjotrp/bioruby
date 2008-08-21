@@ -5,12 +5,14 @@
 #
 #   - replace wget with Ruby HTML fetch
 #   - xml-simple dependency
-#   - naming conventions for methods required
 #   - CACHE path should be configurable
 #   - handle verbosity
 #
 # Pjotr Prins
 
+require 'uri'
+require 'net/http'
+require 'xmlsimple'
 
 module Bio
 
@@ -22,7 +24,11 @@ module Bio
         
         # Fetch an XML definition from the NCBI site
         def XML::fetch xmlfn, acc
-          $stderr.print `wget "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=#{acc}&form=xml&view=brief&retmode=xml" -O #{xmlfn}`
+          url = "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=#{acc}&form=xml&view=brief&retmode=xml" 
+          r = Net::HTTP.get_response( URI.parse( url ) )
+          f = File.new(xmlfn,'w')
+          f.write(r.body)
+          f.close
         end
 
         # Is this a GEO accession?
@@ -58,7 +64,7 @@ module Bio
           @acc = platform
         end
 
-        def name
+        def title
           if @xml
             @xml['Platform'][0]['Title'][0].strip
           else
