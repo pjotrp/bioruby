@@ -83,7 +83,7 @@ module Bio
             # ---- read the data file and yield points
             File.open(@geo_family.path+'/'+datafn).each_line do | line |
               fields = line.split(/\t/)
-              yield positions.collect { | pos | ( pos==value_position ? fields[pos].to_f : fields[pos] ) }
+              yield positions.collect { | pos | ( pos==value_position ? fields[pos].strip.to_f : fields[pos].strip ) }
             end
           end
         end
