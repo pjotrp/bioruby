@@ -1,12 +1,20 @@
-# The GEO module is in the 'hacking' stage. The general idea is to fetch and cache
+#
+# = bio/db/microarray/ncbi_geo/geo.rb - NCBI GEO support
+#
+# Copyright::	Copyright (C) 2008 Pjotr Prins
+# License::	The Ruby License
+#
+# $Id$
+#
+
+# The GEO module is in the development stage. The general idea is to fetch and cache
 # XML files for GPL, GSE and GSM descriptors - and to access them.
 #
 # Notes:
 #
-#   - replace wget with Ruby HTML fetch
 #   - xml-simple dependency
-#   - CACHE path should be configurable
-#   - handle verbosity
+#   - CACHE path is environment variable 
+#   - handle verbosity ($VERBOSE switch?)
 #
 # Pjotr Prins
 
@@ -48,7 +56,7 @@ module Bio
             if !File.exist?(fn)
               XML::fetch(fn,acc)
             end
-            $stderr.print "Reading #{fn}\n"
+            $stderr.print "Parsing #{fn}\n" if $VERBOSE
             return XmlSimple.xml_in(fn, { 'KeyAttr' => 'name' })
           end
           nil
