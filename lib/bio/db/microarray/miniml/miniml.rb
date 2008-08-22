@@ -43,7 +43,13 @@ module Bio
 
         # Return number of rows
         def rows
-          @data['Data-Table'][0]['External-Data'][0]['rows'].to_i
+          return external_data[0]['rows'].to_i if external_data != nil
+          0 
+        end
+
+        # Return External-Data information
+        def external_data
+          @data['Data-Table'][0]['External-Data']
         end
 
         # Fetch the data points for sample using +options+. Returns
