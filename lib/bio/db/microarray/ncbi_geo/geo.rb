@@ -12,9 +12,11 @@
 #
 # Notes:
 #
-#   - xml-simple dependency
-#   - CACHE path is environment variable 
-#   - handle verbosity ($VERBOSE switch?)
+#   - xml-simple dependency 
+#   - CACHE path is environment variable 'BIORUBY_CACHE' or the current directory
+#   - handle verbosity (Bioruby's $VERBOSE switch?)
+#
+# See http://github.com/pjotrp/bioruby/wikis for more information
 #
 # Pjotr Prins
 
