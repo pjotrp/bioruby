@@ -38,6 +38,11 @@ module Bio
           @data['iid']
         end
 
+        # Return number of rows
+        def rows
+          @data['Data-Table'][0]['External-Data'][0]['rows'].to_i
+        end
+
         # Fetch the data points for sample using +options+. Returns
         # data points as an array (by default ID and VALUE). A value
         # column is returned as a Float.
