@@ -33,6 +33,11 @@ module Bio
           @data = sampledata
         end
 
+        # Return GEO accession
+        def acc
+          @data['iid']
+        end
+
         # Fetch the data points for sample using +options+. Returns
         # data points as an array (by default ID and VALUE). A value
         # column is returned as a Float.
@@ -84,7 +89,7 @@ module Bio
         # Iterate sample accessions - returns GEO accession 
         def each_sample_acc
           each_sample do | sample |
-            yield sample['iid']
+            yield sample.acc
           end
         end
 
