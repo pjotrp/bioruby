@@ -41,8 +41,8 @@ module Bio
           f.close
         end
 
-        # Is this a GEO accession?
-        def XML::isGEO? acc = nil
+        # Is this a valid GEO accession?
+        def XML::valid_accession? acc = nil
           acc = @acc if not acc
           acc =~ /^(GSM|GSE|GPL)\d+$/
         end
@@ -51,7 +51,7 @@ module Bio
         # Returns a reference to the XML simple structure
         #
         def XML::parsexml acc
-          if XML::isGEO? acc
+          if XML::valid_accession? acc
             cache = ENV['BIORUBY_CACHE']
             cache = '.' if not cache
             fn = cache+'/'+acc+'.xml'
@@ -72,6 +72,10 @@ module Bio
         def initialize platform
           @xml = XML::parsexml platform
           @acc = platform
+        end
+
+        def valid_accession? 
+          XML::valid_accession? @acc
         end
 
         def title
