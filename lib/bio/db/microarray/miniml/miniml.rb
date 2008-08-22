@@ -87,7 +87,12 @@ module Bio
           @xml = XmlSimple.xml_in(xmlfn, { 'KeyAttr' => 'name' })
         end
 
-        # Returns a Sample object
+        # Return the number of samples
+        def samples
+          @xml['Sample'].size
+        end
+
+        # Returns all Sample objects
         def each_sample
           @xml['Sample'].each do | sample |
             yield Sample.new(self,sample)
