@@ -41,6 +41,11 @@ module Bio
           @data['iid']
         end
 
+        def title
+          return nil if not @data['Title']
+          @data['Title'][0].strip
+        end
+
         # Return number of rows
         def rows
           return external_data[0]['rows'].to_i if external_data != nil
@@ -49,7 +54,10 @@ module Bio
 
         # Return External-Data information
         def external_data
-          @data['Data-Table'][0]['External-Data']
+          if @data['Data-Table']
+            return @data['Data-Table'][0]['External-Data']
+          end
+          nil
         end
 
         # Fetch the data points for sample using +options+. Returns
@@ -61,20 +69,22 @@ module Bio
           value_position = nil
           # ---- get the sample layout
           sample = @data
-          datafn = sample['Data-Table'][0]['External-Data'][0]['content'].strip
-          # ---- find the columns
-          positions = []
-          sample['Data-Table'][0]['Column'].each do | column |
-            name = column['Name'][0]
-            if names.include? column['Name'][0]
-              value_position = positions.size if name == 'VALUE'
-              positions.push column['position'].to_i-1
+          if external_data
+            datafn = external_data[0]['content'].strip
+            # ---- find the columns
+            positions = []
+            sample['Data-Table'][0]['Column'].each do | column |
+              name = column['Name'][0]
+              if names.include? column['Name'][0]
+                value_position = positions.size if name == 'VALUE'
+                positions.push column['position'].to_i-1
+              end
             end
-          end
-          # ---- read the data file and yield points
-          File.open(@geo_family.path+'/'+datafn).each_line do | line |
-            fields = line.split(/\t/)
-            yield positions.collect { | pos | ( pos==value_position ? fields[pos].to_f : fields[pos] ) }
+            # ---- read the data file and yield points
+            File.open(@geo_family.path+'/'+datafn).each_line do | line |
+              fields = line.split(/\t/)
+              yield positions.collect { | pos | ( pos==value_position ? fields[pos].to_f : fields[pos] ) }
+            end
           end
         end
 
