@@ -49,7 +49,7 @@ module Bio
           return nil if data == nil 
           data = data[0] if data.kind_of?(Array)
           return nil if data == nil 
-          return nil if not data[structname] and not data[structname][0]
+          return nil if data[structname]==nil
           data[structname][0]
         end
       end
