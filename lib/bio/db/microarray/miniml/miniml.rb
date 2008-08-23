@@ -34,7 +34,9 @@ module Bio
         # Return a valid and stripped value, or nil
         def sane_field data, fieldname
           data = data[0] if data.kind_of?(Array)
-          return nil if not data[fieldname] and not data[fieldname][0]
+          return nil if data == nil 
+          return nil if data[fieldname] == nil
+          return nil if data[fieldname][0] == nil
           data[fieldname][0].strip
         end
 
