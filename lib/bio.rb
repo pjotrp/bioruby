@@ -5,7 +5,7 @@
 #		Toshiaki Katayama <k@bioruby.org>
 # License::	The Ruby License
 #
-# $Id: bio.rb,v 1.89 2008/01/09 17:18:17 k Exp $
+# $Id: bio.rb,v 1.89.2.4 2008/03/04 11:29:36 ngoto Exp $
 #
 
 module Bio
@@ -26,12 +26,12 @@ module Bio
   ## Features/Feature
 
   autoload :Feature,        'bio/feature'
-  autoload :Features,       'bio/feature'
+  autoload :Features,       'bio/compat/features'
 
   ## References/Reference
 
   autoload :Reference,      'bio/reference'
-  autoload :References,     'bio/reference'
+  autoload :References,     'bio/compat/references'
 
   ## Pathway/Relation
 
@@ -254,6 +254,15 @@ module Bio
   end
 
   autoload :Iprscan,        'bio/appl/iprscan/report'
+
+  module PAML
+    autoload :Codeml,         'bio/appl/paml/codeml'
+    ## below are described in bio/appl/paml/codeml.rb
+    #  # class Codeml
+    #      autoload :Report,       'bio/appl/paml/codeml/report'
+    #      autoload :Rates,        'bio/appl/paml/codeml/rates'
+    #  # end
+  end
 
   ### Utilities
 

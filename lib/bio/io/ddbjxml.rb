@@ -333,6 +333,63 @@ class XML < Bio::SOAPWSDL
     SERVER_URI = BASE_URI + "PML.wsdl"
   end
 
+  # === RequestManager
+  #
+  # Sequence Retrieving System
+  # 
+  # * http://xml.nig.ac.jp/doc/RequestManager.txt
+  # 
+  # === Examples
+  #
+  #   serv = Bio::DDBJ::XML::RequestManager.new
+  #   puts serv.getAsyncResult('20070420102828140')
+  #
+  # === WSDL Methods
+  #
+  # * getAsyncResult( requestId )
+  # * getAsyncResultMime( requestId )
+  #
+  # === Examples
+  #
+  # * http://xml.nig.ac.jp/doc/RequestManager.txt
+  #
+  class RequestManager < XML
+    SERVER_URI = BASE_URI + "RequestManager.wsdl"
+
+    # RequestManager using DDBJ REST interface
+    class REST
+      require 'bio/command'
+
+      Uri = 'http://xml.nig.ac.jp/rest/Invoke'
+      Service = 'RequestManager'
+
+      def getAsyncResult(requestId)
+        params = {
+          'service'   => Service,
+          'method'    => 'getAsyncResult',
+          'requestId' => requestId.to_s
+        }
+        r = Bio::Command.post_form(Uri, params)
+        r.body
+      end
+    end #class REST
+
+    unless defined? new_orig then
+      class << RequestManager
+        alias new_orig new
+        private :new_orig
+      end
+    end
+
+    # creates a new driver
+    def self.new(wsdl = nil)
+      begin
+        new_orig(wsdl)
+      rescue RuntimeError
+        REST.new
+      end
+    end
+  end #class RequestManager
 
   # === SRS
   #
