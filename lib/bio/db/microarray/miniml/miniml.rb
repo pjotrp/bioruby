@@ -116,8 +116,10 @@ module Bio
         # return field names in an Array
         def field_names
           names = []
-          data_table['Column'].each do | c |
-            names.push sane_field(c,'Name')
+          if data_table
+            data_table['Column'].each do | c |
+              names.push sane_field(c,'Name')
+            end
           end
           names
         end
