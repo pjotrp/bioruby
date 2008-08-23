@@ -14,7 +14,7 @@
 #
 # Notes:
 #
-#   - xml-simple dependency
+#   - xml-simple dependency (may change later)
 #   - handle verbosity ($VERBOSE switch?)
 #
 # Pjotr Prins
@@ -27,8 +27,70 @@ module Bio
 
     module MINiML
 
+      # Handling of Simple-XML structures - usually a Hash within an Array -
+      # internal use only
+      module Sanity
+
+        # Return a valid and stripped value, or nil
+        def sane_field data, fieldname
+          data = data[0] if data.kind_of?(Array)
+          return nil if not data[fieldname] and not data[fieldname][0]
+          data[fieldname][0].strip
+        end
+
+        # Like sane_field, but always return a String
+        def sane_field_s data, fieldname
+          retval = sane_field data, fieldname
+          retval='' if retval == nil
+          retval
+        end
+
+        def sane_struct data, structname
+          return nil if data == nil 
+          data = data[0] if data.kind_of?(Array)
+          return nil if data == nil 
+          return nil if not data[structname] and not data[structname][0]
+          data[structname][0]
+        end
+      end
+
+      # Represents a Platform definition (mostly for internal use)
+      class Platform 
+
+        include Sanity
+
+        def initialize geo_family
+          @xml = geo_family
+          @data = @xml['Platform']
+        end
+
+        def manufacturer
+          sane_field @data,'Manufacturer'
+        end
+
+        def technology
+          sane_field @data,'Technology'
+        end
+
+        # Fetch the number of channels from the first sample
+        def channels
+          sample = @xml['Sample'][0]
+          num = sane_field(sample,'Channel-Count')
+          return 1 if num==nil
+          num.to_i
+        end
+
+        # Is this a two_color platform - educated guess
+        def two_color?
+          return false if manufacturer=~/ffymetrix/
+          return channels==2
+        end
+      end
+
       # Represents a Sample definition (mostly for internal use)
       class Sample
+
+        include Sanity
 
         # pass a reference to GEO_Family Sample hash
         def initialize geo_family, sampledata
@@ -42,22 +104,27 @@ module Bio
         end
 
         def title
-          return nil if not @data['Title']
-          @data['Title'][0].strip
+          sane_field @data, 'Title'
         end
 
         # Return number of rows
         def rows
-          return external_data[0]['rows'].to_i if external_data != nil
+          return external_data['rows'].to_i if external_data != nil
           0 
+        end
+
+        # return field names in an Array
+        def field_names
+          names = []
+          data_table['Column'].each do | c |
+            names.push sane_field(c,'Name')
+          end
+          names
         end
 
         # Return External-Data information
         def external_data
-          if @data['Data-Table']
-            return @data['Data-Table'][0]['External-Data']
-          end
-          nil
+          sane_struct(data_table,'External-Data')
         end
 
         # Fetch the data points for sample using +options+. Returns
@@ -70,10 +137,10 @@ module Bio
           # ---- get the sample layout
           sample = @data
           if external_data
-            datafn = external_data[0]['content'].strip
+            datafn = external_data['content'].strip
             # ---- find the columns
             positions = []
-            sample['Data-Table'][0]['Column'].each do | column |
+            data_table['Column'].each do | column |
               name = column['Name'][0]
               if names.include? column['Name'][0]
                 value_position = positions.size if name == 'VALUE'
@@ -86,7 +153,14 @@ module Bio
               yield positions.collect { | pos | ( pos==value_position ? fields[pos].strip.to_f : fields[pos].strip ) }
             end
           end
+
         end
+
+        protected
+    
+          def data_table
+            sane_struct @data,'Data-Table'
+          end
 
       end
   
@@ -101,6 +175,11 @@ module Bio
           @fn   = File.basename(xmlfn)
           $stderr.print "Loading #{@fn} from #{@path}\n" if $VERBOSE 
           @xml = XmlSimple.xml_in(xmlfn, { 'KeyAttr' => 'name' })
+        end
+
+        # Return the Platform object
+        def platform
+          Platform.new @xml
         end
 
         # Return the number of samples
