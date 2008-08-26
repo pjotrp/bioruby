@@ -31,7 +31,23 @@ module Bio
     module GEO
 
       module XML
-        
+
+        # Factory method to create an appropriate class based on the accession (GPL, GSE, GSM)
+        def XML::create acc
+          if valid_accession?(acc)
+            if acc =~ /^GPL/
+              return GPL.new(acc)
+            elsif acc =~ /^GSE/
+              return GSE.new(acc)
+            elsif acc =~ /^GSM/
+              return GSM.new(acc)
+            else
+              raise "GEO::XML::Create can not create a class for #{acc}"
+            end
+          end
+          nil
+        end
+
         # Fetch an XML definition from the NCBI site
         def XML::fetch xmlfn, acc
           url = "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=#{acc}&form=xml&view=brief&retmode=xml" 
