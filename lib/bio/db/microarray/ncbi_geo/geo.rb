@@ -37,7 +37,7 @@ module Bio
         # Example: 
         #
         #    geo = Bio::Microarray::GEO::XML.create('GSE1007')
-        #    p geo    # creates a GSE object
+        #    p geo    # a GSE object
 
         def XML::create acc
           if valid_accession?(acc)
