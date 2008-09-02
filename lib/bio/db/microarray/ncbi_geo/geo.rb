@@ -33,6 +33,12 @@ module Bio
       module XML
 
         # Factory method to create an appropriate class based on the accession (GPL, GSE, GSM)
+        #
+        # Example: 
+        #
+        #    geo = Bio::Microarray::GEO::XML.create('GSE1007')
+        #    p geo    # creates a GSE object
+
         def XML::create acc
           if valid_accession?(acc)
             if acc =~ /^GPL/
@@ -48,7 +54,7 @@ module Bio
           nil
         end
 
-        # Fetch an XML definition from the NCBI site
+        # Fetch an XML definition from the NCBI site.
         def XML::fetch xmlfn, acc
           url = "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=#{acc}&form=xml&view=brief&retmode=xml" 
           r = Net::HTTP.get_response( URI.parse( url ) )
@@ -82,24 +88,33 @@ module Bio
 
       end
 
-      class GPL
+      # Base class for GEO objects
+      class GEOBase
         include XML
 
-        def initialize platform
-          @xml = XML::parsexml platform
-          @acc = platform
+        def initialize acc
+          @xml = XML::parsexml acc
+          @acc = acc
         end
 
         def valid_accession? 
           XML::valid_accession? @acc
         end
 
-        def title
+        def title ref
           if @xml
-            @xml['Platform'][0]['Title'][0].strip
+            @xml[ref][0]['Title'][0].strip 
           else
             @acc
           end
+        end
+      end
+
+      # GPL class represents GPL accession
+      class GPL < GEOBase
+
+        def title
+          super 'Platform'
         end
 
         def organism
@@ -108,36 +123,18 @@ module Bio
 
       end
 
-      class GSE
-        include XML
-
-        def initialize project
-          @xml = XML::parsexml project
-          @acc = project
-        end
+      class GSE < GEOBase
 
         def title
-          if @xml
-            @xml['Series'][0]['Title'][0].strip 
-          else
-            @acc
-          end
+          super 'Series'
         end
 
       end
 
-      class GSM
-        def initialize array
-          @xml = XML::parsexml array
-          @acc = array
-        end
+      class GSM < GEOBase
 
         def title
-          if @xml
-            @gsm['Sample'][0]['Title'][0].strip
-          else
-            @acc
-          end
+          super 'Sample'
         end
       end
 
