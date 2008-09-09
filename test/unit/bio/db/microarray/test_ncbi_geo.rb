@@ -25,9 +25,12 @@ module Bio #:nodoc:
       @cache.delete
     end
 
+    # Test downloading a definition from GEO and access various fields - naturally
+    # you need Internet access for this.
     def test_fields
       gsm = Bio::Microarray::GEO::XML.create('GSM53110')
       assert_equal('Breast - 29245',gsm.title)
+      assert_equal('Patient Age: 60-70',gsm.description.split(/\n/)[1])
     end
 
   end

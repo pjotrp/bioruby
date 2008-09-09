@@ -100,20 +100,26 @@ module Bio
           XML::valid_accession? @acc
         end
 
-        def title ref
+        def title 
           if @xml
-            @xml[ref][0]['Title'][0].strip 
+            @xml[@geo_class][0]['Title'][0].strip 
           else
             @acc
           end
         end
+
+        def description
+          @xml[@geo_class][0]['Description'][0].strip
+        end
+
       end
 
       # GPL class represents GPL accession
       class GPL < GEOBase
 
-        def title
-          super 'Platform'
+        def initialize acc
+          @geo_class = 'Platform'
+          super
         end
 
         def organism
@@ -124,17 +130,20 @@ module Bio
 
       class GSE < GEOBase
 
-        def title
-          super 'Series'
+        def initialize acc
+          @geo_class = 'Series'
+          super
         end
 
       end
 
       class GSM < GEOBase
 
-        def title
-          super 'Sample'
+        def initialize acc
+          @geo_class = 'Sample'
+          super
         end
+
       end
 
     end # GEO
