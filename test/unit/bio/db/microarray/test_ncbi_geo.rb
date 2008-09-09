@@ -16,9 +16,18 @@ module Bio #:nodoc:
 
   class TestGEO < Test::Unit::TestCase #:nodoc:
 
+    def setup
+      @cache = Bio::Microarray::Cache.instance
+      @cache.set('/tmp','test_geo')
+    end
+
+    def teardown
+      @cache.delete
+    end
+
     def test_fields
-      Bio::Microarray::Cache.instance.set('/tmp')
-      geo = Bio::Microarray::GEO::XML.create('GSM53110')
+      gsm = Bio::Microarray::GEO::XML.create('GSM53110')
+      assert_equal('Breast - 29245',gsm.title)
     end
 
   end

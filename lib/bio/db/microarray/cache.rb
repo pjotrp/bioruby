@@ -17,26 +17,51 @@ module Bio
     class Cache
       include Singleton
 
-      # Set the cache directory and create it if needed
-      def set directory
-        if !File.directory? directory
-          Dir.mkdir(directory)
+      # Set the cache +directory+ and (optional) +subdir+ and create it if needed
+      #
+      # Returns: the cache directory
+      #
+      def set directory, subdir = nil
+        dir = directory
+        Dir.mkdir(dir) if !File.directory? dir
+        if subdir
+          dir = dir + '/' + subdir
+          Dir.mkdir(dir) if !File.directory? dir
+          @subdir = subdir
         end
-        @dir = directory
+        @dir = dir
+        dir
       end
 
-      # Return the cache directory - if it has not been set we try environment
+      # Return the cache directory - if it has not been set try environment
       # variables BIORUBY_CACHE and TMPDIR first
-      def directory
+      def directory subdir = nil
         if @dir==nil
           cache = ENV['BIORUBY_CACHE']
           if cache==nil or cache==''
             cache = ENV['TMPDIR']
           end
-          set cache
+          set cache, subdir
         end
         @dir
       end
+
+      # Clear the current cache - will only do that when a subdir was 
+      # defined (for reasons of safety)
+      def clear
+        return if not @subdir
+        Dir.glob(directory+'/*') do | fn |
+          File.unlink fn
+        end
+      end
+
+      # Delete the cache subdirectory - only when subdir exists
+      def delete
+        return if not @subdir
+        clear
+        Dir.delete(directory)
+      end
+
     end
 
   end # Microarray

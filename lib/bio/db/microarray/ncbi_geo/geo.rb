@@ -74,8 +74,7 @@ module Bio
         #
         def XML::parsexml acc
           if XML::valid_accession? acc
-            cache = ENV['BIORUBY_CACHE']
-            cache = '.' if not cache
+            cache = Cache.instance.directory
             fn = cache+'/'+acc+'.xml'
             if !File.exist?(fn)
               XML::fetch(fn,acc)
