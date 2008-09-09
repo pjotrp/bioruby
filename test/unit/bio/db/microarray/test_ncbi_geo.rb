@@ -27,10 +27,17 @@ module Bio #:nodoc:
 
     # Test downloading a definition from GEO and access various fields - naturally
     # you need Internet access for this.
-    def test_fields
+    def test_gsm
       gsm = Bio::Microarray::GEO::XML.create('GSM53110')
       assert_equal('Breast - 29245',gsm.title)
       assert_equal('Patient Age: 60-70',gsm.description.split(/\n/)[1])
+    end
+
+    def test_gpl
+      gpl = Bio::Microarray::GEO::XML.create('GPL89')
+      assert_equal('Affymetrix GeneChip Rat Toxicology U34 Array RT-U34',gpl.title)
+      assert_equal('Rattus norvegicus',gpl.organism)
+      assert_equal('Has 1031 entries and was indexed 29-Jan-2002',gpl.description.split(/\n/)[0])
     end
 
   end
