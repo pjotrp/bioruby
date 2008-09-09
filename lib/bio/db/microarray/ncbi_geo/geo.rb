@@ -37,6 +37,7 @@ module Bio
 
         def XML::create acc
           if valid_accession?(acc)
+            @geo_class = nil
             if acc =~ /^GPL/
               return GPL.new(acc)
             elsif acc =~ /^GSE/
@@ -53,6 +54,7 @@ module Bio
         # Fetch an XML definition from the NCBI site.
         def XML::fetch xmlfn, acc
           url = "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=#{acc}&form=xml&view=brief&retmode=xml" 
+          print "Fetching ",url,"\n" if $VERBOSE
           r = Net::HTTP.get_response( URI.parse( url ) )
           f = File.new(xmlfn,'w')
           f.write(r.body)
@@ -75,7 +77,7 @@ module Bio
             if !File.exist?(fn)
               XML::fetch(fn,acc)
             end
-            $stderr.print "Parsing #{fn}\n" if $VERBOSE
+            print "Parsing #{fn}\n" if $VERBOSE
             doc = Document.new File.new(fn)
             # return XmlSimple.xml_in(fn, { 'KeyAttr' => 'name' })
             return doc
@@ -104,6 +106,7 @@ module Bio
         include XML
 
         def initialize acc
+          @geo_class = 'unknown'
           @xml = XML::parsexml acc
           @acc = acc
         end

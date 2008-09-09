@@ -41,6 +41,7 @@ module Bio
           if cache==nil or cache==''
             cache = ENV['TMPDIR']
           end
+          cache = '/tmp' if cache==nil or cache==''
           set cache, subdir
         end
         @dir
