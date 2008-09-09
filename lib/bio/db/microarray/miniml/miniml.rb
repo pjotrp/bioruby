@@ -7,14 +7,15 @@
 # $Id$
 #
 
-# The MINiML module is in the development stage. This version reads the GEO family
-# XML file and parses values from the value tables for each sample. 
+# The MINiML module is in the development stage. This version reads the GEO
+# family XML file, which can be downloaded through FTP, and parses values from
+# the value tables for each sample. 
 #
 # See http://github.com/pjotrp/bioruby/wikis for more information
 #
 # Notes:
 #
-#   - xml-simple dependency (may change later)
+#   - xml-simple dependency (will change later to rexml)
 #   - handle verbosity ($VERBOSE switch?)
 #
 # Pjotr Prins

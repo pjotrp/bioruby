@@ -8,13 +8,8 @@
 #
 
 # The GEO module is in the development stage. The general idea is to fetch and cache
-# XML files for GPL, GSE and GSM descriptors - and to access them.
-#
-# Notes:
-#
-#   - xml-simple dependency 
-#   - CACHE path is environment variable 'BIORUBY_CACHE' or the current directory
-#   - handle verbosity (Bioruby's $VERBOSE switch?)
+# XML files for GPL, GSE and GSM descriptors - and to access them. For examples you
+# can also see the unit tests in test/unit/bio/db/microarray/test_ncbi_geo.rb
 #
 # See http://github.com/pjotrp/bioruby/wikis for more information
 #

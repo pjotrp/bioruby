@@ -1,8 +1,8 @@
 #
 # test/unit/bio/db/microarray/test_ncbi_geo.rb - Unit test for Bio::Microarray::GEO
 #
-# Author::    Pjotr Prins
-# License::   The Ruby License
+# Copyright::	Copyright (C) 2008 Pjotr Prins
+# License::	The Ruby License
 #
 
 require 'pathname'
