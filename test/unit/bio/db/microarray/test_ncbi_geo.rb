@@ -31,6 +31,8 @@ module Bio #:nodoc:
       gsm = Bio::Microarray::GEO::XML.create('GSM53110')
       assert_equal('Breast - 29245',gsm.title)
       assert_equal('Patient Age: 60-70',gsm.description.split(/\n/)[1])
+      assert_equal('ftp://ftp.ncbi.nih.gov/pub/geo/DATA/supplementary/samples/GSM53nnn/GSM53110/GSM53110.CEL.gz',gsm.supplementary_data)
+      assert_equal('Gene Expression Omnibus (GEO)',gsm.xpath('/Database/Name').text.to_s)
     end
 
     def test_gpl

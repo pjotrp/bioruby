@@ -85,8 +85,17 @@ module Bio
 
         def XML::class_item xml, name
           return nil if xml==nil
-          item = xml.elements["*/#{@geo_class}/#{name}"].first
-          item.to_s
+          elements = xml.elements["*/#{@geo_class}/#{name}"]
+          if elements
+            return elements.first.to_s
+          end
+          nil
+        end
+
+        def XML::xpath xml, path
+          path = '/MINiML'+path
+          match = XPath.first(xml,path)
+          match
         end
       end
 
@@ -111,10 +120,19 @@ module Bio
           end
         end
 
-        def description
-          XML::class_item(@xml,'Description').strip
+        def xpath path
+          XML::xpath @xml,path
         end
 
+        # GEOBase tries to match XML elements when an unknown method is called.
+        # For example Supplementary-Data is fetched when supplementary_data is called.
+        #
+        def method_missing(m, *args)  
+          # convert method to XML element name and call 
+          item = XML::class_item(@xml,m.to_s.split('_').each { | part | part.capitalize! } .join('-'))
+          raise "Unknown method/element #{m}" if item == nil
+          item.strip 
+        end  
       end
 
       # GPL class represents GPL accession
@@ -125,9 +143,9 @@ module Bio
           super
         end
 
-        def organism
-          XML::class_item(@xml,'Organism').strip
-        end
+        # def organism
+        #   XML::class_item(@xml,'Organism').strip
+        # end
 
       end
 
@@ -139,6 +157,17 @@ module Bio
         end
 
       end
+
+
+      # A GEO GSM object. Usage:
+      #
+      #    gsm = Bio::Microarray::GEO::XML.create('GSM53110')
+      #    gsm.title
+      #    > 'Breast - 29245'
+      #    gsm.supplementary_data
+      #    > ftp://ftp.ncbi.nih.gov/pub/geo/DATA/supplementary/samples/GSM53nnn/GSM53110/GSM53110.CEL.gz'
+      #    gsm.xpath('/Database/Name').to_s
+      #    > 'Gene Expression Omnibus (GEO)'
 
       class GSM < GEOBase
 
