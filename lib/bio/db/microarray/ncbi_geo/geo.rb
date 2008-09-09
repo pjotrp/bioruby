@@ -22,7 +22,7 @@
 
 require 'uri'
 require 'net/http'
-require 'xmlsimple'
+require "rexml/document"
 
 module Bio
 
@@ -32,6 +32,7 @@ module Bio
 
       module XML
 
+        include REXML
         # Factory method to create an appropriate class based on the accession (GPL, GSE, GSM)
         #
         # Example: 
@@ -80,11 +81,18 @@ module Bio
               XML::fetch(fn,acc)
             end
             $stderr.print "Parsing #{fn}\n" if $VERBOSE
-            return XmlSimple.xml_in(fn, { 'KeyAttr' => 'name' })
+            doc = Document.new File.new(fn)
+            # return XmlSimple.xml_in(fn, { 'KeyAttr' => 'name' })
+            return doc
           end
           nil
         end
 
+        def XML::class_item xml, name
+          return nil if xml==nil
+          item = xml.elements["*/#{@geo_class}/#{name}"].first
+          item.to_s
+        end
       end
 
       # Base class for GEO objects
@@ -102,14 +110,14 @@ module Bio
 
         def title 
           if @xml
-            @xml[@geo_class][0]['Title'][0].strip 
+            XML::class_item(@xml,'Title').strip
           else
             @acc
           end
         end
 
         def description
-          @xml[@geo_class][0]['Description'][0].strip
+          XML::class_item(@xml,'Description').strip
         end
 
       end
@@ -123,7 +131,7 @@ module Bio
         end
 
         def organism
-          @xml['Platform'][0]['Organism'][0].strip if @xml
+          XML::class_item(@xml,'Organism').strip
         end
 
       end
