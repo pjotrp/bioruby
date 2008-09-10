@@ -21,11 +21,11 @@ module Bio
       #
       # Returns: the cache directory
       #
-      def set directory, subdir = nil
+      def set(directory, subdir = nil)
         dir = directory
         Dir.mkdir(dir) if !File.directory? dir
         if subdir
-          dir = dir + '/' + subdir
+          dir = File.join(dir, subdir)
           Dir.mkdir(dir) if !File.directory? dir
           @subdir = subdir
         end
@@ -35,14 +35,14 @@ module Bio
 
       # Return the cache directory - if it has not been set try environment
       # variables BIORUBY_CACHE and TMPDIR first
-      def directory subdir = nil
+      def directory(subdir = nil)
         if @dir==nil
           cache = ENV['BIORUBY_CACHE']
           if cache==nil or cache==''
             cache = ENV['TMPDIR']
           end
-          cache = '/tmp' if cache==nil or cache==''
-          set cache, subdir
+          cache = Dir.tmpdir if cache==nil or cache==''
+          set(cache, subdir)
         end
         @dir
       end
