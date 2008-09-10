@@ -7,9 +7,9 @@
 # $Id$
 #
 
-# The GEO module is in the development stage. The general idea is to fetch and cache
-# XML files for GPL, GSE and GSM descriptors - and to access them. For examples you
-# can also see the unit tests in test/unit/bio/db/microarray/test_ncbi_geo.rb
+# GEO module. The general idea is to fetch and cache XML files for GPL, GSE and
+# GSM descriptors - and to access them. For examples you can also see the unit
+# tests in test/unit/bio/db/microarray/test_ncbi_geo.rb
 #
 # See http://github.com/pjotrp/bioruby/wikis for more information
 #
@@ -35,7 +35,7 @@ module Bio
         #    geo = Bio::Microarray::GEO::XML.create('GSE1007')
         #    p geo    # a GSE object
 
-        def XML::create acc
+        def XML::create(acc)
           if valid_accession?(acc)
             @geo_class = nil
             if acc =~ /^GPL/
@@ -52,7 +52,7 @@ module Bio
         end
 
         # Fetch an XML definition from the NCBI site.
-        def XML::fetch xmlfn, acc
+        def XML::fetch(xmlfn, acc)
           url = "http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=#{acc}&form=xml&view=brief&retmode=xml" 
           print "Fetching ",url,"\n" if $VERBOSE
           r = Net::HTTP.get_response( URI.parse( url ) )
@@ -62,7 +62,7 @@ module Bio
         end
 
         # Is this a valid GEO accession?
-        def XML::valid_accession? acc = nil
+        def XML::valid_accession?(acc = nil)
           acc = @acc if not acc
           acc =~ /^(GSM|GSE|GPL)\d+$/
         end
@@ -70,7 +70,7 @@ module Bio
         # Parse XML for GEO acc - caching the file if it does not exist
         # Returns a reference to the XML simple structure
         #
-        def XML::parsexml acc
+        def XML::parsexml(acc)
           if XML::valid_accession? acc
             cache = Cache.instance.directory
             fn = cache+'/'+acc+'.xml'
@@ -85,7 +85,7 @@ module Bio
           nil
         end
 
-        def XML::class_item xml, name
+        def XML::class_item(xml, name)
           return nil if xml==nil
           elements = xml.elements["*/#{@geo_class}/#{name}"]
           if elements
@@ -94,7 +94,7 @@ module Bio
           nil
         end
 
-        def XML::xpath xml, path
+        def XML::xpath(xml, path)
           path = '/MINiML'+path
           match = XPath.first(xml,path)
           match
@@ -105,7 +105,7 @@ module Bio
       class GEOBase
         include XML
 
-        def initialize acc
+        def initialize(acc)
           @geo_class = 'unknown'
           @xml = XML::parsexml acc
           @acc = acc
@@ -123,7 +123,7 @@ module Bio
           end
         end
 
-        def xpath path
+        def xpath(path)
           XML::xpath @xml,path
         end
 
@@ -141,7 +141,7 @@ module Bio
       # GPL class represents GPL accession
       class GPL < GEOBase
 
-        def initialize acc
+        def initialize(acc)
           @geo_class = 'Platform'
           super
         end
@@ -154,7 +154,7 @@ module Bio
 
       class GSE < GEOBase
 
-        def initialize acc
+        def initialize(acc)
           @geo_class = 'Series'
           super
         end
@@ -174,7 +174,7 @@ module Bio
 
       class GSM < GEOBase
 
-        def initialize acc
+        def initialize(acc)
           @geo_class = 'Sample'
           super
         end
