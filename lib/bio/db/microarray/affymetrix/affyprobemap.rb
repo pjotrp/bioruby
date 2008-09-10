@@ -1,3 +1,25 @@
+#
+# = bio/db/affyprobemap.rb - Affymetrix microarray database classes
+#
+# Copyright::	Copyright (C) 2008
+# 		Pjotr Prins
+# License::	The Ruby License
+#
+# $Id$
+#
+# = About Bio::Microarray::AffyProbemap
+#
+# Affymetrix CDF file access using the Ben Bolstad's Biolib::Affyio package (part 
+# of R Bioconductor). To use this feature you need to install biolib on your
+# system.
+#
+# = References
+#
+# * ((<URL:http://biolib.open-bio.org/>))
+# * http://bmbolstad.com/software/index.html
+# * http://www.bioconductor.org/
+#
+
 
 module Bio #:nodoc:
 
@@ -8,7 +30,7 @@ module Bio #:nodoc:
       attr_reader :cdf
       # Read the probemap from an Affy CDF file
       #
-      def initialize filename
+      def initialize(filename)
         raise "Affy CDF file #{filename} does not exist!" if !File.exist?(filename)
         @cdf = Biolib::Affyio.open_cdffile(filename)
         ObjectSpace.define_finalizer(self,self.class.method(:finalize).to_proc)
@@ -32,7 +54,7 @@ module Bio #:nodoc:
         end
       end
 
-      def probeset_info index
+      def probeset_info(index)
         Biolib::Affyio.cdf_probeset_info(@cdf,index)
       end
     end

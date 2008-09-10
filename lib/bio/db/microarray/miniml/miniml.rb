@@ -16,7 +16,6 @@
 # Notes:
 #
 #   - xml-simple dependency (will change later to rexml)
-#   - handle verbosity ($VERBOSE switch?)
 #
 # Pjotr Prins
 
@@ -178,7 +177,7 @@ module Bio
         def initialize xmlfn
           @path = File.dirname(xmlfn)
           @fn   = File.basename(xmlfn)
-          $stderr.print "Loading #{@fn} from #{@path}\n" if $VERBOSE 
+          print "Loading #{@fn} from #{@path}\n" if $VERBOSE 
           @xml = XmlSimple.xml_in(xmlfn, { 'KeyAttr' => 'name' })
         end
 

@@ -1,3 +1,25 @@
+#
+# = bio/db/affy.rb - Affymetrix microarray database classes
+#
+# Copyright::	Copyright (C) 2008
+# 		Pjotr Prins
+# License::	The Ruby License
+#
+# $Id$
+#
+# = About Bio::Microarray::AffyProbeset
+#
+# Affymetrix CEL file access using the Ben Bolstad's Biolib::Affyio package (part 
+# of R Bioconductor). To use this feature you need to install biolib on your
+# system.
+#
+# = References
+#
+# * ((<URL:http://biolib.open-bio.org/>))
+# * http://bmbolstad.com/software/index.html
+# * http://www.bioconductor.org/
+#
+
 
 module Bio #:nodoc:
 
@@ -10,14 +32,14 @@ module Bio #:nodoc:
       # +affy+ is an Affy cel object
       # +number+ is the probeset number
       #
-      def initialize affy, number
+      def initialize(affy, number)
         @affy = affy
         @cel = affy.cel
         @cdf = affy.probemap.cdf
         @number = number
       end
 
-      def info index
+      def info(index)
         Biolib::Affyio.cdf_probeset_info(@cdf,@number)
       end
 
