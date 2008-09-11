@@ -29,9 +29,13 @@ module Bio #:nodoc:
     # you need Internet access for this.
     def test_gsm
       gsm = Bio::Microarray::GEO::XML.create('GSM53110')
+      # methods
       assert_equal('Breast - 29245',gsm.title)
+      assert_equal('GPL570',gsm.platform_acc)
       assert_equal('Patient Age: 60-70',gsm.description.split(/\n/)[1])
       assert_equal('ftp://ftp.ncbi.nih.gov/pub/geo/DATA/supplementary/samples/GSM53nnn/GSM53110/GSM53110.CEL.gz',gsm.supplementary_data)
+      # xPath
+      assert_equal('GPL570',gsm.xpath('/Platform/Accession').text)
       assert_equal('Gene Expression Omnibus (GEO)',gsm.xpath('/Database/Name').text.to_s)
     end
 

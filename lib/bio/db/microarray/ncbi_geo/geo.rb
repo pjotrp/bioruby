@@ -105,10 +105,13 @@ module Bio
       class GEOBase
         include XML
 
+        attr_reader :acc
+
         def initialize(acc)
           @geo_class = 'unknown'
           @xml = XML::parsexml acc
           @acc = acc
+          raise "Invalid accession <#{acc}>" if not valid_accession?
         end
 
         def valid_accession? 
@@ -121,6 +124,14 @@ module Bio
           else
             @acc
           end
+        end
+
+        # Returns the platform accession (GPL type). This only works for GPL
+        # and GSM objects. Returns nil on failure.
+        def platform_acc
+          p = xpath('/Platform/Accession')
+          return p.text if p
+          nil
         end
 
         def xpath(path)
