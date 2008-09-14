@@ -131,9 +131,18 @@ module Bio
           sane_struct(data_table,'External-Data')
         end
 
-        # Fetch the data points for sample using +options+. Returns
-        # data points as an array (by default ID and VALUE). A value
-        # column is returned as a Float.
+        # Yields a tabular row with the data points for sample using +options+.
+        # Returns data points as an array (by default ID and VALUE). A value
+        # column is returned as a Float. Example:
+        #
+        #  m = Bio::Microarray::MINiML::GEO_Family.new(fn)
+        #  m.each_sample do | sample |
+        #    sample.each_row() do | tablerow |
+        #      rowname = data[0]
+        #      rownames.add(data[0])
+        #      matrix.push = data[1]
+        #    end
+        #  end
         #
         def each_row options = {:columns=>["ID_REF", "VALUE"]}
           names = options[:columns]
