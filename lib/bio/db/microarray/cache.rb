@@ -34,6 +34,8 @@ module Bio
       #   dir = cache.set(Dir.getwd,'.cache')      # another possibility
       #
       def set(directory, subdir = nil, safe = true)
+        @subdir = nil
+        @dir = nil
         dir = directory
         Dir.mkdir_p(dir) if !File.directory? dir
         if subdir

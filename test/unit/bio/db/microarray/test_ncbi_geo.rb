@@ -47,11 +47,12 @@ module Bio #:nodoc:
       @cache.delete
     end
 
-    #def test_security
-    #  assert_raise SecurityError do
-    #    @cache.set('/tmp')
-    #  end
-    #end
+    def test_security
+      @cache.delete
+      assert_raise SecurityError do
+        @cache.set('/tmp')
+      end
+    end
 
   end
 
