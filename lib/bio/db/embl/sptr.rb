@@ -4,7 +4,7 @@
 # Copyright::   Copyright (C) 2001-2006  Mitsuteru C. Nakao <n@bioruby.org>
 # License::     The Ruby License
 #
-# $Id: sptr.rb,v 1.36.2.1 2008/04/24 13:49:42 ngoto Exp $
+# $Id:$
 #
 # == Description
 # 
@@ -241,7 +241,7 @@ class SPTR < EMBLDB
     records = gn_line.split(/\s*and\s*/)
     records.each do |record|
       gene_hash = {:name => '', :synonyms => [], :loci => [], :orfs => []}
-      record.each(';') do |element|
+      record.each_line(';') do |element|
         case element
         when /Name=/ then
           gene_hash[:name] = $'[0..-2]
@@ -677,17 +677,17 @@ class SPTR < EMBLDB
     when 'COFACTOR'
       return @data['CC'][topic]
     when 'DEVELOPMENTAL STAGE'
-      return @data['CC'][topic].to_s
+      return @data['CC'][topic].join('')
     when 'DISEASE'
-      return @data['CC'][topic].to_s
+      return @data['CC'][topic].join('')
     when 'DOMAIN'
       return @data['CC'][topic]
     when 'ENZYME REGULATION'
-      return @data['CC'][topic].to_s
+      return @data['CC'][topic].join('')
     when 'FUNCTION'
-      return @data['CC'][topic].to_s
+      return @data['CC'][topic].join('')
     when 'INDUCTION'
-      return @data['CC'][topic].to_s
+      return @data['CC'][topic].join('')
     when 'INTERACTION'
       return cc_interaction(@data['CC'][topic])
     when 'MASS SPECTROMETRY'
@@ -748,7 +748,7 @@ class SPTR < EMBLDB
 
 
   def cc_alternative_products(data)
-    ap = data.to_s
+    ap = data.join('')
     return ap unless ap
 
     # Event, Named isoforms, Comment, [Name, Synonyms, IsoId, Sequnce]+
@@ -821,7 +821,7 @@ class SPTR < EMBLDB
 
 
   def cc_caution(data)
-    data.to_s
+    data.join('')
   end
   private :cc_caution
 
@@ -830,7 +830,7 @@ class SPTR < EMBLDB
   #
   #   CC       P46527:CDKN1B; NbExp=1; IntAct=EBI-359815, EBI-519280;
   def cc_interaction(data)
-    str = data.to_s
+    str = data.join('')
     it = str.scan(/(.+?); NbExp=(.+?); IntAct=(.+?);/)
     it.map {|ent|
       ent.map! {|x| x.strip }
@@ -893,7 +893,7 @@ class SPTR < EMBLDB
 
 
   def cc_rna_editing(data)
- data = data.to_s
+    data = data.join('')
     entry = {'Modified_positions' => [], 'Note' => ""}
     if data =~ /Modified_positions=(.+?)(\.|;)/
       entry['Modified_positions'] = $1.sub(/\.$/, '').split(', ')
@@ -960,7 +960,7 @@ class SPTR < EMBLDB
     unless key
       embl_dr
     else
-      embl_dr[key].map {|x|
+      (embl_dr[key] or []).map {|x|
         {'Accession' => x[0],
          'Version' => x[1],
          ' ' => x[2],
