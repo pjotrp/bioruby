@@ -32,6 +32,7 @@ module Bio
 
       def rexml_parse_program(dom)
         hash = {}
+        raise "WARNING: Document has no root - are you trying to parse twice?" if dom.root == nil
         dom.root.each_element_with_text do |e|
           name, text = e.name, e.text
           case name
