@@ -2,41 +2,43 @@
 #
 # A possible test run could be from rdtool (on Debian package rdtool)
 #
-#   ruby -I lib ./bin/rd2 ~/cvs/opensource/bioruby/doc/Tutorial.rd
+#   ruby -I lib ./bin/rd2 $BIORUBYPATH/doc/Tutorial.rd
 #
 # or with style sheet:
 #
-#   ruby -I lib ./bin/rd2 -r rd/rd2html-lib.rb --with-c
-ss=bioruby.css ~/cvs/opensource/bioruby/doc/Tutorial.rd > ~/bioruby.html
+#   ruby -I lib ./bin/rd2 -r rd/rd2html-lib.rb --with-css=bioruby.css $BIORUBYPATH/doc/Tutorial.rd > ~/bioruby.html
 #
 # in Debian:
 #
-#   rd2 -r rd/rd2html-lib  --with-css="/home/wrk/izip/cvs/opensource/bioruby/lib/bio/shell/rails/vendor/plugins/bioruby/generators/bioruby/templates/bioruby.css" Tutorial.rd > index.html
+#   rd2 -r rd/rd2html-lib  --with-css="../lib/bio/shell/rails/vendor/plugins/bioruby/generators/bioruby/templates/bioruby.css" Tutorial.rd > Tutorial.rd.html
 #
 # A common problem is tabs in the text file! TABs are not allowed.
 #
 # To add tests run Toshiaki's bioruby shell and paste in the query plus
 # results.
 #
-# To run the embedded Ruby doctests you can get the doctest.rb from Pjotr.
+# To run the embedded Ruby doctests you can use the rubydoctest tool, part
+# of the bioruby-support repository at http://github.com/pjotrp/bioruby-support/
+#
 
 =begin
 #doctest Testing bioruby
 
 = BioRuby Tutorial
 
-Editor: PjotrPrins <p .at. bioruby.org>
-
 * Copyright (C) 2001-2003 KATAYAMA Toshiaki <k .at. bioruby.org>
-* Copyright (C) 2005-2008 Pjotr Prins, Naohisa Goto and others
+* Copyright (C) 2005-2009 Pjotr Prins, Naohisa Goto and others
 
-The latest version resides in the GIT source code repository:  ./doc/((<Tutorial.rd|http://github.com/bioruby/bioruby/tree/master/doc/Tutorial.rd>)).
+This document was last modified: 2009/03/12
+Current editor: Pjotr Prins <p .at. bioruby.org>
+
+The latest version resides in the GIT source code repository:  ./doc/((<Tutorial.rd|URL:http://github.com/pjotrp/bioruby/raw/documentation/doc/Tutorial.rd>)).
 
 == Introduction
 
 This is a tutorial for using Bioruby. A basic knowledge of Ruby is required.
 If you want to know more about the programming langauge Ruby we recommend the
-excellent book ((<Programming Ruby|URL:http://www.pragprog.com/titles/ruby>))
+latest Ruby book ((<Programming Ruby|URL:http://www.pragprog.com/titles/ruby>))
 by Dave Thomas and Andy Hunt - some of it is online
 ((<here|URL:http://www.rubycentral.com/pickaxe/>)).
 
@@ -49,7 +51,7 @@ version it has with the
 
 command. Showing something like:
 
-  ruby 1.8.5 (2006-08-25) [powerpc-linux]
+  ruby 1.8.7 (2008-08-11 patchlevel 72) [i486-linux]
 
 If you see no such thing you'll have to install Ruby using your installation
 manager. For more information see the
@@ -77,6 +79,7 @@ and you should see a prompt
 
 Now test the following:
 
+  bioruby> require 'bio'
   bioruby> seq = Bio::Sequence::NA.new("atgcatgcaaaa")
   ==> "atgcatgcaaaa"
 
@@ -195,9 +198,7 @@ use all methods on the subsequence. For example,
 * Shows translation results for 15 bases shifting a codon at a time
 
   bioruby> a = []
-  bioruby> seq.window_search(15, 3) do |s|
-  bioruby>   a.push s.translate
-  bioruby> end
+  bioruby> seq.window_search(15, 3) { | s | a.push s.translate }
   bioruby> a
   ==> ["MHAIK", "HAIKL", "AIKLI", "IKLIP", "KLIPI", "LIPIR", "IPIRS", "PIRSS", "IRSSR", "RSSRS", "SSRSS", "SRSSK", "RSSKK", "SSKKK"]
 
@@ -228,9 +229,7 @@ Other examples
 * Count the codon usage
 
   bioruby> codon_usage = Hash.new(0)
-  bioruby> seq.window_search(3, 3) do |s|
-  bioruby>   codon_usage[s] += 1
-  bioruby> end
+  bioruby> seq.window_search(3, 3) { |s| codon_usage[s] += 1 }
   bioruby> codon_usage
   ==> {"cat"=>1, "aaa"=>3, "cca"=>1, "att"=>2, "aga"=>1, "atc"=>1, "cta"=>1, "gca"=>1, "cga"=>1, "tca"=>3, "aag"=>1, "tcc"=>1, "atg"=>1}
 
@@ -238,9 +237,7 @@ Other examples
 * Calculate molecular weight for each 10-aa peptide (or 10-nt nucleic acid)
 
   bioruby> a = []
-  bioruby> seq.window_search(10, 10) do |s|
-  bioruby>   a.push s.molecular_weight
-  bioruby> end
+  bioruby> seq.window_search(10, 10) { |s| a.push s.molecular_weight }
   bioruby> a
   ==> [3096.2062, 3086.1962, 3056.1762, 3023.1262, 3073.2262]
 
@@ -770,7 +767,7 @@ Check the documentation for Bio::Blast::Report to see what can be
 retrieved. For now suffice to state that Bio::Blast::Report has a
 hierarchical structure mirroring the general BLAST output stream:
 
-  * In a Bio::Blast::Report object, @iteratinos is an array of
+  * In a Bio::Blast::Report object, @iterations is an array of
     Bio::Blast::Report::Iteration objects.
     * In a Bio::Blast::Report::Iteration object, @hits is an array of
       Bio::Blast::Report::Hits objects.
@@ -786,13 +783,24 @@ you can directly create Bio::Blast::Report objects without the
 Bio::Blast factory object. For this purpose use Bio::Blast.reports,
 which supports the "-m 0" default and "-m 7" XML type output format.
 
-    #!/usr/bin/env ruby
+* For example: 
+
+  bioruby> blast_version = nil; result = []
+  bioruby> Bio::Blast.reports(File.new('../test/data/blast/blastp-multi.m7')) do |report|
+  bioruby>   blast_version = report.version
+  bioruby>   report.iterations.each do |itr|
+  bioruby>     result += itr.hits.collect { | hit | hit.target_id } 
+  bioruby>   end
+  bioruby> end
+  bioruby> blast_version
+  ==> "blastp 2.2.18 [Mar-02-2008]"
+  bioruby> result
+  ==> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
+
+* another example:
 
     require 'bio'
-
-    # Iterates over each XML result.
-    # The variable "report" is a Bio::Blast::Report object.
-    Bio::Blast.reports(ARGF) do |report|
+    Bio::Blast.reports(ARGF) do |report| 
       puts "Hits for " + report.query_def + " against " + report.db
       report.each do |hit|
         print hit.target_id, "\t", hit.evalue, "\n" if hit.evalue < 0.001
@@ -800,14 +808,12 @@ which supports the "-m 0" default and "-m 7" XML type output format.
     end
 
 Save the script as hits_under_0.001.rb and to process BLAST output
-files *.xml, you can
+files *.xml, you can run it with:
 
    % ruby hits_under_0.001.rb *.xml
 
-Sometimes BLAST XML output may be wrong and can not be parsed. We
-recommended to install BLAST 2.2.5 or later, and try combinations of
-the -D and -m options when you encounter problems.
-
+Sometimes BLAST XML output may be wrong and can not be parsed. Check whether 
+blast is version 2.2.5 or later. See also blast --help. 
 
 === Add remote BLAST search sites
 
@@ -830,13 +836,30 @@ Bio::Blast::Report.new(or Bio::Blast::Default::Report.new):
 When you write above routines, please send to the BioRuby project and
 they may be included.
 
+== Gene Ontology (GO)
+
+Gene Ontologies can be fetched through the Ensembl package:
+
+   require 'ensembl'
+   Ensembl::Core::DBConnection.connect('drosophila_melanogaster')
+   infile = IO.readlines(ARGV.shift) # reading your comma-separated accession mapping file (one line per mapping)
+   infile.each do |line|
+     accs = line.split(",")          # Split the comma-sep.entries into an array
+     drosphila_acc = accs.shift      # the first entry is the Drosophila acc
+     mosq_acc = accs.shift           # the second entry is you Mosq. acc
+     gene = Ensembl::Core::Gene.find_by_stable_id(drosophila_acc)
+     print "#{mosq_acc}"
+     gene.go_terms.each do |go|
+        print ",#{go}"
+      end
+    end
+
+Prints each mosq. accession/uniq identifier and the GO terms from the Drosphila
+homologues.
+
 == Generate a reference list using PubMed (Bio::PubMed)
 
 Below script is an example which seaches PubMed and creates a reference list.
-
-    #!/usr/bin/env ruby
-
-    require 'bio'
 
     ARGV.each do |id|
       entry = Bio::PubMed.query(id)     # searches PubMed and get entry
@@ -1005,10 +1028,6 @@ BioRuby and other projects' members (2002).
 
 Here we give a quick overview. Check out
 ((<URL:http://obda.open-bio.org/>)) for more extensive details.
-
-The specification is stored on CVS repository at cvs.open-bio.org,
-also available via http from:
-((<URL:http://cvs.open-bio.org/cgi-bin/viewcvs/viewcvs.cgi/obda-specs/?cvsroot=obf-common>))
 
 == BioRegistry
 
@@ -1250,6 +1269,10 @@ Please refer to KEGG_API.rd.ja (English version: ((<URL:http://www.genome.jp/keg
 
   * ((<URL:http://www.genome.jp/kegg/soap/>))
 
+== ENSEMBL API
+
+See ((<URL:http://wiki.github.com/jandot/ruby-ensembl-api>))
+
 == Comparing BioProjects
 
 For a quick functional comparison of BioRuby, BioPerl, BioPython and Bioconductor (R) see ((<URL:http://sciruby.codeforpeople.com/sr.cgi/BioProjects>))
@@ -1280,13 +1303,13 @@ carefully that come with each package.
 Ruby fails to find the BioRuby libraries - add it to the RUBYLIB path, or pass
 it to the interpeter. For example:
 
-  ruby -I~/cvs/bioruby/lib yourprogram.rb
+  ruby -I$BIORUBYPATH/lib yourprogram.rb
 
 == Modifying this page
 
-IMPORTANT NOTICE: This page is maintained in the BioRuby CVS
+IMPORTANT NOTICE: This page is maintained in the BioRuby source code 
 repository. Please edit the file there otherwise changes may get
-lost. See ((<BioRuby Developer Information>)) for CVS and mailing list
+lost. See ((<BioRuby Developer Information>)) for repository and mailing list
 access.
 
 =end
