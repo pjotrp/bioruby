@@ -1,7 +1,7 @@
 #
 # = bio/db/microarray/miniml/miniml.rb - MINiML support (as used in NCBI GEO)
 #
-# Copyright::	Copyright (C) 2008 Pjotr Prins
+# Copyright::	Copyright (C) 2008, 2009 Pjotr Prins
 # License::	The Ruby License
 #
 # $Id$
@@ -61,8 +61,9 @@ module Bio
 
         include Sanity
 
-        def initialize geo_family
-          @xml = geo_family
+        def initialize geo_family, xml
+          @geo_family = geo_family
+          @xml = xml
           @data = @xml['Platform']
         end
 
@@ -82,10 +83,46 @@ module Bio
           num.to_i
         end
 
-        # Is this a two_color platform - educated guess
+        # Is this a two_color platform - 'educated' guess, at least
+        # for Affymetrix
+        #
         def two_color?
           return false if manufacturer=~/ffymetrix/
           return channels==2
+        end
+
+        # Yields a tabular row with the probe information from the GPL
+        # platform description
+        #
+        #  m = Bio::Microarray::MINiML::GEO_Family.new(fn)
+        #  m.each_probe do | probeinfo |
+        #    p probeinfo['ID'], probeinfo['Sequence Type'],probeinfo['Transcript ID']
+        #  end
+        #
+        def each_probe
+          # ---- get the sample layout
+          data_table = sane_struct(@data,'Data-Table')
+          if data_table
+            external_data = data_table['External-Data']
+            datafn = external_data[0]['content'].strip
+            # ---- find the columns
+            columns = {}
+            data_table['Column'].each do | column |
+              name = column['Name'][0]
+              columns[column['position']] = name
+            end
+            # ---- read the data file and yield points
+            File.open(@geo_family.path+'/'+datafn).each_line do | line |
+              fields = line.split(/\t/)
+              result = {}
+              columns.each do | pos, name |
+                pos = pos.to_i - 1
+                # p [pos, name, fields[pos]]
+                result[name] = fields[pos]
+              end
+              yield result
+            end
+          end
         end
       end
 
@@ -148,7 +185,6 @@ module Bio
           names = options[:columns]
           value_position = nil
           # ---- get the sample layout
-          sample = @data
           if external_data
             datafn = external_data['content'].strip
             # ---- find the columns
@@ -177,7 +213,10 @@ module Bio
 
       end
   
-      # Definitition of a GEO family file - describing a series of microarrays
+      # Definition of a GEO family file - describing a series of microarrays
+      # in MINiML format. The meta-data is stored in XML by NCBI GEO. Probes
+      # are stored in table files.
+      #
       class GEO_Family
 
         attr_reader :path
@@ -192,7 +231,7 @@ module Bio
 
         # Return the Platform object
         def platform
-          Platform.new @xml
+          Platform.new self, @xml
         end
 
         # Return the number of samples
@@ -215,8 +254,6 @@ module Bio
         end
 
       end
-
-
 
     end # MINiML
   end # Microarray
