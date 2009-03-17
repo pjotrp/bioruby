@@ -13,7 +13,7 @@
 <li>Copyright (C) 2001-2003 KATAYAMA Toshiaki &lt;k .at. bioruby.org&gt;</li>
 <li>Copyright (C) 2005-2009 Pjotr Prins, Naohisa Goto and others</li>
 </ul>
-<p>This document was last modified: 2009/03/02
+<p>This document was last modified: 2009/03/17
 Current editor: Pjotr Prins &lt;p .at. bioruby.org&gt;</p>
 <p>The latest version resides in the GIT source code repository:  ./doc/<a href="http://github.com/pjotrp/bioruby/raw/documentation/doc/Tutorial.rd">Tutorial.rd</a>.</p>
 <h2><a name="label-1" id="label-1">Introduction</a></h2><!-- RDLabel: "Introduction" -->
@@ -27,7 +27,7 @@ by Dave Thomas and Andy Hunt - some of it is online
 version it has with the</p>
 <pre>% ruby -v</pre>
 <p>command. Showing something like:</p>
-<pre>ruby 1.8.5 (2006-08-25) [powerpc-linux]</pre>
+<pre>ruby 1.8.7 (2008-08-11 patchlevel 72) [i486-linux]</pre>
 <p>If you see no such thing you'll have to install Ruby using your installation
 manager. For more information see the
 <a href="http://www.ruby-lang.org/en/">Ruby</a> website.</p>
@@ -45,7 +45,8 @@ ruby -I lib bin/bioruby</pre>
 <p>and you should see a prompt</p>
 <pre>bioruby&gt;</pre>
 <p>Now test the following:</p>
-<pre>bioruby&gt; seq = Bio::Sequence::NA.new("atgcatgcaaaa")
+<pre>bioruby&gt; require 'bio'
+bioruby&gt; seq = Bio::Sequence::NA.new("atgcatgcaaaa")
 ==&gt; "atgcatgcaaaa"
 
 bioruby&gt; seq.complement
@@ -144,9 +145,7 @@ use all methods on the subsequence. For example,</p>
 <ul>
 <li><p>Shows translation results for 15 bases shifting a codon at a time</p>
 <p>bioruby&gt; a = []
-bioruby&gt; seq.window_search(15, 3) do |s|
-bioruby&gt;   a.push s.translate
-bioruby&gt; end
+bioruby&gt; seq.window_search(15, 3) { | s | a.push s.translate }
 bioruby&gt; a
 ==&gt; ["MHAIK", "HAIKL", "AIKLI", "IKLIP", "KLIPI", "LIPIR", "IPIRS", "PIRSS", "IRSSR", "RSSRS", "SSRSS", "SRSSK", "RSSKK", "SSKKK"]</p></li>
 </ul>
@@ -173,16 +172,12 @@ size to equal values.</p>
 <ul>
 <li><p>Count the codon usage</p>
 <p>bioruby&gt; codon_usage = Hash.new(0)
-bioruby&gt; seq.window_search(3, 3) do |s|
-bioruby&gt;   codon_usage[s] += 1
-bioruby&gt; end
+bioruby&gt; seq.window_search(3, 3) { |s| codon_usage[s] += 1 }
 bioruby&gt; codon_usage
 ==&gt; {"cat"=&gt;1, "aaa"=&gt;3, "cca"=&gt;1, "att"=&gt;2, "aga"=&gt;1, "atc"=&gt;1, "cta"=&gt;1, "gca"=&gt;1, "cga"=&gt;1, "tca"=&gt;3, "aag"=&gt;1, "tcc"=&gt;1, "atg"=&gt;1}</p></li>
 <li><p>Calculate molecular weight for each 10-aa peptide (or 10-nt nucleic acid)</p>
 <p>bioruby&gt; a = []
-bioruby&gt; seq.window_search(10, 10) do |s|
-bioruby&gt;   a.push s.molecular_weight
-bioruby&gt; end
+bioruby&gt; seq.window_search(10, 10) { |s| a.push s.molecular_weight }
 bioruby&gt; a
 ==&gt; [3096.2062, 3086.1962, 3056.1762, 3023.1262, 3073.2262]</p></li>
 </ul>
@@ -394,7 +389,7 @@ bioruby&gt; seqs = seqs.collect{ |x| Bio::Sequence::NA.new(x) }
 # creates alignment object
 bioruby&gt; a = Bio::Alignment.new(seqs)
 bioruby&gt; a.consensus 
-==&gt; "xa?gc?"
+==&gt; "a?gc?"
 # shows IUPAC consensus
 p a.consensus_iupac       # ==&gt; "ahgcr"
 
@@ -637,7 +632,7 @@ are extracted from the first Hsp (High-scoring Segment Pair).</p>
 retrieved. For now suffice to state that Bio::Blast::Report has a
 hierarchical structure mirroring the general BLAST output stream:</p>
 <ul>
-<li>In a Bio::Blast::Report object, @iteratinos is an array of
+<li>In a Bio::Blast::Report object, @iterations is an array of
     Bio::Blast::Report::Iteration objects.
 <ul>
 <li>In a Bio::Blast::Report::Iteration object, @hits is an array of
@@ -654,24 +649,36 @@ hierarchical structure mirroring the general BLAST output stream:</p>
 you can directly create Bio::Blast::Report objects without the
 Bio::Blast factory object. For this purpose use Bio::Blast.reports,
 which supports the "-m 0" default and "-m 7" XML type output format.</p>
-<pre>#!/usr/bin/env ruby
-
-require 'bio'
-
-# Iterates over each XML result.
-# The variable "report" is a Bio::Blast::Report object.
-Bio::Blast.reports(ARGF) do |report|
+<ul>
+<li><p>For example: </p>
+<p>bioruby&gt; blast_version = nil; result = []
+bioruby&gt; Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
+bioruby&gt;   blast_version = report.version
+bioruby&gt;   report.iterations.each do |itr|
+bioruby&gt;     result += itr.hits.collect { | hit | hit.target_id } 
+bioruby&gt;   end
+bioruby&gt; end
+bioruby&gt; blast_version
+==&gt; "blastp 2.2.18 [Mar-02-2008]"
+bioruby&gt; result
+==&gt; ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]</p></li>
+<li><p>another example:</p>
+<pre>require 'bio'
+Bio::Blast.reports(ARGF) do |report| 
   puts "Hits for " + report.query_def + " against " + report.db
   report.each do |hit|
     print hit.target_id, "\t", hit.evalue, "\n" if hit.evalue &lt; 0.001
   end
-end</pre>
+end</pre></li>
+</ul>
 <p>Save the script as hits_under_0.001.rb and to process BLAST output
-files *.xml, you can</p>
+files *.xml, you can run it with:</p>
 <pre>% ruby hits_under_0.001.rb *.xml</pre>
-<p>Sometimes BLAST XML output may be wrong and can not be parsed. We
-recommended to install BLAST 2.2.5 or later, and try combinations of
-the -D and -m options when you encounter problems.</p>
+<p>Sometimes BLAST XML output may be wrong and can not be parsed. Check whether 
+blast is version 2.2.5 or later. See also blast --help. </p>
+<p>Bio::Blast loads the full XML file into memory. If this causes a problem
+you can split the BLAST XML file into smaller chunks using XML-Twig. An
+example can be found in <a href="http://github.com/pjotrp/biotools/">Biotools</a>.</p>
 <h3><a name="label-13" id="label-13">Add remote BLAST search sites</a></h3><!-- RDLabel: "Add remote BLAST search sites" -->
 <pre>Note: this section is an advanced topic</pre>
 <p>Here a more advanced application for using BLAST sequence homology
