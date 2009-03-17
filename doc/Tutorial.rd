@@ -17,7 +17,9 @@
 # To add tests run Toshiaki's bioruby shell and paste in the query plus
 # results.
 #
-# To run the embedded Ruby doctests you can use the rubydoctest tool.
+# To run the embedded Ruby doctests you can use the rubydoctest tool, part
+# of the bioruby-support repository at http://github.com/pjotrp/bioruby-support/
+#
 
 =begin
 #doctest Testing bioruby
@@ -49,7 +51,7 @@ version it has with the
 
 command. Showing something like:
 
-  ruby 1.8.5 (2006-08-25) [powerpc-linux]
+  ruby 1.8.7 (2008-08-11 patchlevel 72) [i486-linux]
 
 If you see no such thing you'll have to install Ruby using your installation
 manager. For more information see the
@@ -77,6 +79,7 @@ and you should see a prompt
 
 Now test the following:
 
+  bioruby> require 'bio'
   bioruby> seq = Bio::Sequence::NA.new("atgcatgcaaaa")
   ==> "atgcatgcaaaa"
 
@@ -195,9 +198,7 @@ use all methods on the subsequence. For example,
 * Shows translation results for 15 bases shifting a codon at a time
 
   bioruby> a = []
-  bioruby> seq.window_search(15, 3) do |s|
-  bioruby>   a.push s.translate
-  bioruby> end
+  bioruby> seq.window_search(15, 3) { | s | a.push s.translate }
   bioruby> a
   ==> ["MHAIK", "HAIKL", "AIKLI", "IKLIP", "KLIPI", "LIPIR", "IPIRS", "PIRSS", "IRSSR", "RSSRS", "SSRSS", "SRSSK", "RSSKK", "SSKKK"]
 
@@ -228,9 +229,7 @@ Other examples
 * Count the codon usage
 
   bioruby> codon_usage = Hash.new(0)
-  bioruby> seq.window_search(3, 3) do |s|
-  bioruby>   codon_usage[s] += 1
-  bioruby> end
+  bioruby> seq.window_search(3, 3) { |s| codon_usage[s] += 1 }
   bioruby> codon_usage
   ==> {"cat"=>1, "aaa"=>3, "cca"=>1, "att"=>2, "aga"=>1, "atc"=>1, "cta"=>1, "gca"=>1, "cga"=>1, "tca"=>3, "aag"=>1, "tcc"=>1, "atg"=>1}
 
@@ -238,9 +237,7 @@ Other examples
 * Calculate molecular weight for each 10-aa peptide (or 10-nt nucleic acid)
 
   bioruby> a = []
-  bioruby> seq.window_search(10, 10) do |s|
-  bioruby>   a.push s.molecular_weight
-  bioruby> end
+  bioruby> seq.window_search(10, 10) { |s| a.push s.molecular_weight }
   bioruby> a
   ==> [3096.2062, 3086.1962, 3056.1762, 3023.1262, 3073.2262]
 
@@ -770,7 +767,7 @@ Check the documentation for Bio::Blast::Report to see what can be
 retrieved. For now suffice to state that Bio::Blast::Report has a
 hierarchical structure mirroring the general BLAST output stream:
 
-  * In a Bio::Blast::Report object, @iteratinos is an array of
+  * In a Bio::Blast::Report object, @iterations is an array of
     Bio::Blast::Report::Iteration objects.
     * In a Bio::Blast::Report::Iteration object, @hits is an array of
       Bio::Blast::Report::Hits objects.
@@ -786,13 +783,24 @@ you can directly create Bio::Blast::Report objects without the
 Bio::Blast factory object. For this purpose use Bio::Blast.reports,
 which supports the "-m 0" default and "-m 7" XML type output format.
 
-    #!/usr/bin/env ruby
+* For example: 
+
+  bioruby> blast_version = nil; result = []
+  bioruby> Bio::Blast.reports(File.new('../test/data/blast/blastp-multi.m7')) do |report|
+  bioruby>   blast_version = report.version
+  bioruby>   report.iterations.each do |itr|
+  bioruby>     result += itr.hits.collect { | hit | hit.target_id } 
+  bioruby>   end
+  bioruby> end
+  bioruby> blast_version
+  ==> "blastp 2.2.18 [Mar-02-2008]"
+  bioruby> result
+  ==> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
+
+* another example:
 
     require 'bio'
-
-    # Iterates over each XML result.
-    # The variable "report" is a Bio::Blast::Report object.
-    Bio::Blast.reports(ARGF) do |report|
+    Bio::Blast.reports(ARGF) do |report| 
       puts "Hits for " + report.query_def + " against " + report.db
       report.each do |hit|
         print hit.target_id, "\t", hit.evalue, "\n" if hit.evalue < 0.001
@@ -800,14 +808,12 @@ which supports the "-m 0" default and "-m 7" XML type output format.
     end
 
 Save the script as hits_under_0.001.rb and to process BLAST output
-files *.xml, you can
+files *.xml, you can run it with:
 
    % ruby hits_under_0.001.rb *.xml
 
-Sometimes BLAST XML output may be wrong and can not be parsed. We
-recommended to install BLAST 2.2.5 or later, and try combinations of
-the -D and -m options when you encounter problems.
-
+Sometimes BLAST XML output may be wrong and can not be parsed. Check whether 
+blast is version 2.2.5 or later. See also blast --help. 
 
 === Add remote BLAST search sites
 
