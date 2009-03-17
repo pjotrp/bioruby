@@ -18,7 +18,7 @@ module Bio #:nodoc:
 
     def setup
       @cache = Bio::Microarray::Cache.instance
-      @cache.set('/tmp','test_geo')
+      @cache.set(Dir.getwd,'BIORUBY_MICROARRAY_UNITTEST_CACHE')
     end
 
     def teardown
@@ -44,6 +44,14 @@ module Bio #:nodoc:
       assert_equal('Affymetrix GeneChip Rat Toxicology U34 Array RT-U34',gpl.title)
       assert_equal('Rattus norvegicus',gpl.organism)
       assert_equal('Has 1031 entries and was indexed 29-Jan-2002',gpl.description.split(/\n/)[0])
+      @cache.delete
+    end
+
+    def test_security
+      @cache.delete
+      assert_raise SecurityError do
+        @cache.set('/tmp')
+      end
     end
 
   end

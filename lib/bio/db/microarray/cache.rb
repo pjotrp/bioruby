@@ -6,6 +6,8 @@
 #
 
 require 'singleton'
+require 'fileutils'
+require 'tmpdir'
 
 module Bio
 
@@ -17,32 +19,60 @@ module Bio
     class Cache
       include Singleton
 
-      # Set the cache +directory+ and (optional) +subdir+ and create it if needed
+      # Set the cache +directory+ and (optional) +subdir+ and create it if needed. 
+      # If +safe+ is true (default) a SecurityError will be raised if the
+      # directory has read/write access for all. If no cache dir is set an
+      # automatic (safe) tmpdir is used.
       #
       # Returns: the cache directory
       #
-      def set(directory, subdir = nil)
+      # Example:
+      #
+      #   cache =  Bio::Microarray::Cache.instance
+      #   dir = cache.set                          # use BIORUBY_CACHE or a safe tmpdir
+      #   dir = cache.set('/home/user/tmp','GEO')  # use your own
+      #   dir = cache.set(Dir.getwd,'.cache')      # another possibility
+      #
+      def set(directory, subdir = nil, safe = true)
+        @subdir = nil
+        @dir = nil
         dir = directory
-        Dir.mkdir(dir) if !File.directory? dir
+        Dir.mkdir_p(dir) if !File.directory? dir
         if subdir
           dir = File.join(dir, subdir)
           Dir.mkdir(dir) if !File.directory? dir
           @subdir = subdir
         end
         @dir = dir
+        if safe
+          raise SecurityError if (File.stat(dir).mode & 0002) != 0
+        end
         dir
       end
 
       # Return the cache directory - if it has not been set try environment
-      # variables BIORUBY_CACHE and TMPDIR first
-      def directory(subdir = nil)
+      # variables BIORUBY_CACHE and Ruby's (safe) TMPDIR first (if a directory
+      # is world writable a security error will be raised).
+      #
+      # When +safe+ is true the use of /tmp is avoided.
+      #
+      # Returns: path to cache directory
+      #
+      def directory(subdir = nil, safe = true)
         if @dir==nil
           cache = ENV['BIORUBY_CACHE']
           if cache==nil or cache==''
-            cache = ENV['TMPDIR']
+            subdir = 'BIORUBY' if subdir==nil
+            cache = Dir.mktmpdir(subdir)
+            subdir = File.basename(cache)
+            dir = File.dirname(cache)
+            set(dir,subdir)
+            return @dir
           end
+          cache = ENV['TMPDIR'] if cache==nil or cache==''
           cache = Dir.tmpdir if cache==nil or cache==''
           set(cache, subdir)
+          raise SecurityError if safe==true and (@dir == Dir.tmpdir or @dir == '')
         end
         @dir
       end
@@ -60,7 +90,7 @@ module Bio
       def delete
         return if not @subdir
         clear
-        Dir.delete(directory)
+        FileUtils.remove_entry_secure(@dir) if File.directory?(@dir)
       end
 
     end
