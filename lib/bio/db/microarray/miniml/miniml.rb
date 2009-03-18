@@ -124,6 +124,16 @@ module Bio
             end
           end
         end
+
+        # Return an array of probe IDs
+        def ids
+          result = []
+          each_probe do | probe |
+            raise 'Probename not defined at line #{result.size}' if probe['ID']==nil or probe['ID']==''
+            result.push probe['ID']
+          end
+          result
+        end
       end
 
       # Represents a Sample definition (mostly for internal use)
@@ -163,9 +173,39 @@ module Bio
           names
         end
 
+        # Return the name of the ID field
+        def field_id
+          'ID_REF'
+        end
+
+        # Return the name of the field containing the raw value of
+        # the probe - FIXME: the heuristic should take meta descriptors
+        # into account.
+        def field_raw
+          names = field_names
+          if not names.include?('ID_REF') and not names.include?('VALUE')
+            p names
+            raise 'Problem with field names - missing value!'
+          end
+          if names.include?('RAW_SIGNAL')
+            'RAW_SIGNAL'
+          elsif names.include?('VALUE2')
+            'VALUE2'
+          else
+            'VALUE'
+          end
+        end
+
         # Return External-Data information
         def external_data
           sane_struct(data_table,'External-Data')
+        end
+
+        # Return External-Data filename
+        def external_data_filename
+          if external_data
+            datafn = external_data['content'].strip
+          end
         end
 
         # Yields a tabular row with the data points for sample using +options+.
@@ -186,7 +226,7 @@ module Bio
           value_position = nil
           # ---- get the sample layout
           if external_data
-            datafn = external_data['content'].strip
+            datafn = external_data_filename
             # ---- find the columns
             positions = []
             data_table['Column'].each do | column |
