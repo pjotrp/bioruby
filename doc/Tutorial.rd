@@ -1,12 +1,10 @@
 # This document is generated with a version of rd2html (part of Hiki)
 #
-# A possible test run could be from rdtool (on Debian package rdtool)
-#
-#   ruby -I lib ./bin/rd2 $BIORUBYPATH/doc/Tutorial.rd
+#   rd2 Tutorial.rd
 #
 # or with style sheet:
 #
-#   ruby -I lib ./bin/rd2 -r rd/rd2html-lib.rb --with-css=bioruby.css $BIORUBYPATH/doc/Tutorial.rd > ~/bioruby.html
+#   rd2 -r rd/rd2html-lib.rb --with-css=bioruby.css Tutorial.rd > Tutorial.rd.html
 #
 # in Debian:
 #
@@ -29,7 +27,7 @@
 * Copyright (C) 2001-2003 KATAYAMA Toshiaki <k .at. bioruby.org>
 * Copyright (C) 2005-2009 Pjotr Prins, Naohisa Goto and others
 
-This document was last modified: 2009/03/12
+This document was last modified: 2009/03/19
 Current editor: Pjotr Prins <p .at. bioruby.org>
 
 The latest version resides in the GIT source code repository:  ./doc/((<Tutorial.rd|URL:http://github.com/pjotrp/bioruby/raw/documentation/doc/Tutorial.rd>)).
@@ -183,12 +181,12 @@ through a variable named +s+.
 
 * Show average percentage of GC content for 20 bases (stepping the default one base at a time)
 
-  bioruby> seq = Bio::Sequence::NA.new("atgcatgcaattaagctaatcccaattagatcatcccgatcatcaaaaaaaaaa")
-  ==> "atgcatgcaattaagctaatcccaattagatcatcccgatcatcaaaaaaaaaa"
+   bioruby> seq = Bio::Sequence::NA.new("atgcatgcaattaagctaatcccaattagatcatcccgatcatcaaaaaaaaaa")
+   ==> "atgcatgcaattaagctaatcccaattagatcatcccgatcatcaaaaaaaaaa"
 
-  bioruby> a=[]; seq.window_search(20) { |s| a.push s.gc_percent } 
-  bioruby> a
-  ==> [30, 35, 40, 40, 35, 35, 35, 30, 25, 30, 30, 30, 35, 35, 35, 35, 35, 40, 45, 45, 45, 45, 40, 35, 40, 40, 40, 40, 40, 35, 35, 35, 30, 30, 30]
+   bioruby> a=[]; seq.window_search(20) { |s| a.push s.gc_percent } 
+   bioruby> a
+   ==> [30, 35, 40, 40, 35, 35, 35, 30, 25, 30, 30, 30, 35, 35, 35, 35, 35, 40, 45, 45, 45, 45, 40, 35, 40, 40, 40, 40, 40, 35, 35, 35, 30, 30, 30]
 
  
 Since the class of each subsequence is the same as original sequence
@@ -197,11 +195,10 @@ use all methods on the subsequence. For example,
 
 * Shows translation results for 15 bases shifting a codon at a time
 
-  bioruby> a = []
-  bioruby> seq.window_search(15, 3) { | s | a.push s.translate }
-  bioruby> a
-  ==> ["MHAIK", "HAIKL", "AIKLI", "IKLIP", "KLIPI", "LIPIR", "IPIRS", "PIRSS", "IRSSR", "RSSRS", "SSRSS", "SRSSK", "RSSKK", "SSKKK"]
-
+   bioruby> a = []
+   bioruby> seq.window_search(15, 3) { | s | a.push s.translate }
+   bioruby> a
+   ==> ["MHAIK", "HAIKL", "AIKLI", "IKLIP", "KLIPI", "LIPIR", "IPIRS", "PIRSS", "IRSSR", "RSSRS", "SSRSS", "SRSSK", "RSSKK", "SSKKK"]
 
 Finally, the window_search method returns the last leftover
 subsequence. This allows for example
@@ -228,18 +225,18 @@ Other examples
 
 * Count the codon usage
 
-  bioruby> codon_usage = Hash.new(0)
-  bioruby> seq.window_search(3, 3) { |s| codon_usage[s] += 1 }
-  bioruby> codon_usage
-  ==> {"cat"=>1, "aaa"=>3, "cca"=>1, "att"=>2, "aga"=>1, "atc"=>1, "cta"=>1, "gca"=>1, "cga"=>1, "tca"=>3, "aag"=>1, "tcc"=>1, "atg"=>1}
+   bioruby> codon_usage = Hash.new(0)
+   bioruby> seq.window_search(3, 3) { |s| codon_usage[s] += 1 }
+   bioruby> codon_usage
+   ==> {"cat"=>1, "aaa"=>3, "cca"=>1, "att"=>2, "aga"=>1, "atc"=>1, "cta"=>1, "gca"=>1, "cga"=>1, "tca"=>3, "aag"=>1, "tcc"=>1, "atg"=>1}
 
 
 * Calculate molecular weight for each 10-aa peptide (or 10-nt nucleic acid)
 
-  bioruby> a = []
-  bioruby> seq.window_search(10, 10) { |s| a.push s.molecular_weight }
-  bioruby> a
-  ==> [3096.2062, 3086.1962, 3056.1762, 3023.1262, 3073.2262]
+   bioruby> a = []
+   bioruby> seq.window_search(10, 10) { |s| a.push s.molecular_weight }
+   bioruby> a
+   ==> [3096.2062, 3086.1962, 3056.1762, 3023.1262, 3073.2262]
 
 In most cases, sequences are read from files or retrieved from databases.
 For example:
@@ -664,7 +661,7 @@ method of the factory object after the "query" method.
 === using FASTA from a remote internet site
 
 * Note: Currently, only GenomeNet (fasta.genome.jp) is
-supported. check the class documentation for updates.
+  supported. check the class documentation for updates.
 
 For accessing a remote site the Bio::Fasta.remote method is used
 instead of Bio::Fasta.local.  When using a remote method, the
@@ -785,17 +782,19 @@ which supports the "-m 0" default and "-m 7" XML type output format.
 
 * For example: 
 
-  bioruby> blast_version = nil; result = []
-  bioruby> Bio::Blast.reports(File.new('../test/data/blast/blastp-multi.m7')) do |report|
-  bioruby>   blast_version = report.version
-  bioruby>   report.iterations.each do |itr|
-  bioruby>     result += itr.hits.collect { | hit | hit.target_id } 
-  bioruby>   end
-  bioruby> end
-  bioruby> blast_version
-  ==> "blastp 2.2.18 [Mar-02-2008]"
-  bioruby> result
-  ==> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
+   bioruby> blast_version = nil; result = []
+   bioruby> Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
+   bioruby>   blast_version = report.version
+   bioruby>   report.iterations.each do |itr|
+   bioruby>     itr.hits.each do |hit|
+   bioruby>       result.push hit.target_id
+   bioruby>     end
+   bioruby>   end
+   bioruby> end
+   bioruby> blast_version
+   ==> "blastp 2.2.18 [Mar-02-2008]"
+   bioruby> result
+   ==> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
 
 * another example:
 
@@ -814,6 +813,10 @@ files *.xml, you can run it with:
 
 Sometimes BLAST XML output may be wrong and can not be parsed. Check whether 
 blast is version 2.2.5 or later. See also blast --help. 
+
+Bio::Blast loads the full XML file into memory. If this causes a problem
+you can split the BLAST XML file into smaller chunks using XML-Twig. An
+example can be found in ((<Biotools|URL:http://github.com/pjotrp/biotools/>)).
 
 === Add remote BLAST search sites
 
@@ -1269,9 +1272,33 @@ Please refer to KEGG_API.rd.ja (English version: ((<URL:http://www.genome.jp/keg
 
   * ((<URL:http://www.genome.jp/kegg/soap/>))
 
-== ENSEMBL API
+== Ruby Ensembl API
 
-See ((<URL:http://wiki.github.com/jandot/ruby-ensembl-api>))
+Ruby Ensembl API is a ruby API to the Ensembl database. It is NOT currently
+included in the BioRuby archives. To install it, see
+((<URL:http://wiki.github.com/jandot/ruby-ensembl-api>))
+for more information.
+
+=== Gene Ontology (GO) through the Ruby Ensembl API
+
+Gene Ontologies can be fetched through the Ruby Ensembl API package:
+
+   require 'ensembl'
+   Ensembl::Core::DBConnection.connect('drosophila_melanogaster')
+   infile = IO.readlines(ARGV.shift) # reading your comma-separated accession mapping file (one line per mapping)
+   infile.each do |line|
+     accs = line.split(",")          # Split the comma-sep.entries into an array
+     drosphila_acc = accs.shift      # the first entry is the Drosophila acc
+     mosq_acc = accs.shift           # the second entry is you Mosq. acc
+     gene = Ensembl::Core::Gene.find_by_stable_id(drosophila_acc)
+     print "#{mosq_acc}"
+     gene.go_terms.each do |go|
+        print ",#{go}"
+     end
+   end
+
+Prints each mosq. accession/uniq identifier and the GO terms from the Drosphila
+homologues.
 
 == Comparing BioProjects
 
