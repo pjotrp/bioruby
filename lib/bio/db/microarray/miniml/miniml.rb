@@ -4,8 +4,6 @@
 # Copyright::	Copyright (C) 2008, 2009 Pjotr Prins
 # License::	The Ruby License
 #
-# $Id$
-#
 
 # The MINiML module is in the development stage. This version reads the GEO
 # family XML file, which can be downloaded through FTP, and parses values from
@@ -178,22 +176,30 @@ module Bio
           'ID_REF'
         end
 
-        # Return the name of the field containing the raw value of
-        # the probe - FIXME: the heuristic should take meta descriptors
-        # into account.
-        def field_raw
+        # Return the name of the field containing the raw value of the probe.
+        # Unfortunately there is no clear standard of uploading values into
+        # GEO. The 'VALUE' field can mean different things (like genotype with
+        # SNP arrays, probeset value, probe value or even differential value).
+        # It is important to read the family file definition as even within
+        # datasets there may be differences. This method will try the fields in
+        # +searchlist+ first. Next it will look for 'RAW_SIGNAL', 'MedianS' and
+        # finally 'VALUE'. The field name belonging to the first match will be
+        # returned. So if your dataset contains 'VALUE2' and 'STRANGE' try
+        #  
+        #   name = field_raw(['VALUE2','STRANGE'])
+        #
+        # which will pick up the name in that search order.
+        #
+        # When no match is made an exception is raised.
+        #
+        def field_raw searchlist=[]
+          searchlist = [] if searchlist==nil
+          searchlist += ['RAW_SIGNAL', 'MedianS', 'VALUE']
           names = field_names
-          if not names.include?('ID_REF') and not names.include?('VALUE')
-            p names
-            raise 'Problem with field names - missing value!'
+          searchlist.each do | match |
+            return match if names.include?(match)
           end
-          if names.include?('RAW_SIGNAL')
-            'RAW_SIGNAL'
-          elsif names.include?('VALUE2')
-            'VALUE2'
-          else
-            'VALUE'
-          end
+          raise TypeError("No match found")
         end
 
         # Return External-Data information
