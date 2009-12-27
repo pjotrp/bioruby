@@ -102,6 +102,7 @@ module Bio
 
     # Process a textual object for ALN data
     def process lines
+      $stderr.print "Clustalw warning: unexpected empty buffer" if !lines or !lines.size
       @sequences = ClustalwSequences.new
       @matches = ''
       @header = lines[0].strip
