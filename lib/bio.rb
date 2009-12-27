@@ -120,6 +120,7 @@ module Bio
   autoload :AAindex,        'bio/db/aaindex'
   autoload :AAindex1,       'bio/db/aaindex' # change to AAindex::AAindex1 ?
   autoload :AAindex2,       'bio/db/aaindex' # change to AAindex::AAindex2 ?
+  autoload :Clustalw,       'bio/db/clustalw'
   autoload :TRANSFAC,       'bio/db/transfac'
   autoload :PROSITE,        'bio/db/prosite'
   autoload :LITDB,          'bio/db/litdb'
