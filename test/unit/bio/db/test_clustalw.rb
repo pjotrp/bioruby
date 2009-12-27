@@ -51,7 +51,12 @@ module Bio
     end
 
     def test_alignment
-      assert_equal("                                              .: :    *:   .     .     **. .   ..   ::*:       . * : : .        .: .* * *",@aln.alignment_info[0..120])
+      p @aln.alignment
+      assert_equal('xx',@aln.alignment.consensus)
+    end
+
+    def test_match_line
+      assert_equal("                                              .: :    *:   .     .     **. .   ..   ::*:       . * : : .        .: .* * *",@aln.match_line[0..120])
     end
 
   end # class TestClustalwFormat

@@ -7,6 +7,7 @@
 #
 
 require 'bio/sequence'
+require 'bio/alignment'
 
 module Bio
 
@@ -60,6 +61,12 @@ module Bio
     def add s
       @data += s
     end
+    def extract_key
+      @id
+    end
+    def extract_seq
+      @data
+    end
   end
 
   # Aligned sequence information container, used by Bio::Clustalw internally
@@ -78,6 +85,9 @@ module Bio
     end
     def fetch_by_num num
       @list[num]
+    end
+    def each 
+      @list.each
     end
   end
 
@@ -129,16 +139,23 @@ module Bio
       create_sequence(seq.data,seq.id)
     end
 
-    # Return the alignment info as a string.
+    # Return the Clustal alignment matches as a string.
     #
     # The information about which residues match is shown below each block of residues:
     #
     #    "*" means that the residues or nucleotides in that column are identical in all sequences in the alignment.
     #    ":" means that conserved substitutions have been observed.
     #    "." means that semi-conserved substitutions are observed.
-    def alignment_info
+    def match_line
       @matches
     end
+
+    # Return a Bio::Alignment object
+    def alignment
+      p @sequences
+      Bio::Alignment.new(@sequences)
+    end
+
   private
     
     # Creates a Bio::Sequence object with sequence 'seq_str'

@@ -540,9 +540,13 @@ Get the partial sequences
 
 Show the full alignment residue match information for the sequences in the set
 
-   bioruby> aln.alignment_info[60..120]
+   bioruby> aln.match_line[60..120]
    ==> "     .     **. .   ..   ::*:       . * : : .        .: .* * *"
 
+Return a Bio::Alignment object
+
+   bioruby> aln.alignment
+   ==> ""
 
 == Restriction Enzymes (Bio::RE)
 
