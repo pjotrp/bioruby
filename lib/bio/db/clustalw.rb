@@ -49,6 +49,7 @@ module Bio
 
   class ClustalwError < RuntimeError ; end  #:nodoc:
 
+  # Aligned sequence information, used by Bio::Clustalw internally
   class ClustalwSequence
     attr_reader :id, :data
     def initialize id, s
@@ -61,7 +62,8 @@ module Bio
     end
   end
 
-  class ClustalwSequences # container
+  # Aligned sequence information container, used by Bio::Clustalw internally
+  class ClustalwSequences
     def initialize
       @list = []
       @index = {}
@@ -81,7 +83,7 @@ module Bio
 
   class Clustalw
 
-    attr_reader :header
+    attr_reader :header, :matches
 
     IDENTICAL='*'
     CONSERVED=':'
@@ -98,8 +100,10 @@ module Bio
       process(lines)
     end
 
+    # Process a textual object for ALN data
     def process lines
       @sequences = ClustalwSequences.new
+      @matches = ''
       @header = lines[0].strip
       @header =~ /^(\S+)/
       id = $1
@@ -107,18 +111,33 @@ module Bio
       each_seq_segment(lines[1..-1]) do | id, data |
         if id == '!!alnmetric!!'
           # metric line is treated different
-
+          @matches += data
         else
           @sequences.add(id,data)
         end
       end
     end
 
+    # Return a Bio::Sequence object from the alignment
+    # ---
+    # *Arguments*:
+    # * (required) num : Integer
+    # *Returns*:: Bio::Sequence
     def get_sequence num
       seq = @sequences.fetch_by_num(num)
       create_sequence(seq.data,seq.id)
     end
 
+    # Return the alignment info as a string.
+    #
+    # The information about which residues match is shown below each block of residues:
+    #
+    #    "*" means that the residues or nucleotides in that column are identical in all sequences in the alignment.
+    #    ":" means that conserved substitutions have been observed.
+    #    "." means that semi-conserved substitutions are observed.
+    def alignment_info
+      @matches
+    end
   private
     
     # Creates a Bio::Sequence object with sequence 'seq_str'
@@ -126,7 +145,7 @@ module Bio
     # ---
     # *Arguments*:
     # * (required) _seq_str_: String
-    # * (optional) _defintion_: String
+    # * (optional) _definition_: String
     # *Returns*:: Bio::Sequence
     def create_sequence( seq_str, definition = "" )
       seq = Bio::Sequence.auto( seq_str )

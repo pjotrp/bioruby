@@ -46,10 +46,12 @@ module Bio
       seq = @aln.get_sequence(1)
       assert_equal('gi|115023|sp|P10425|',seq.definition)
       assert_equal('MKKNTLLKVGLCV',seq.to_s[0..12])
+      # ascertain it is a BioRuby Bio::Sequence object
+      assert_equal(Bio::Sequence::AA,seq.moltype)
     end
 
     def test_alignment
-      # "                                              .: :"
+      assert_equal("                                              .: :    *:   .     .     **. .   ..   ::*:       . * : : .        .: .* * *",@aln.alignment_info[0..120])
     end
 
   end # class TestClustalwFormat
