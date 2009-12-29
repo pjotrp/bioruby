@@ -29,7 +29,7 @@
 * Copyright (C) 2001-2003 KATAYAMA Toshiaki <k .at. bioruby.org>
 * Copyright (C) 2005-2009 Pjotr Prins, Naohisa Goto and others
 
-This document was last modified: 2009/12/27
+This document was last modified: 2009/12/29
 Current editor: Pjotr Prins <p .at. bioruby.org>
 
 The latest version resides in the GIT source code repository:  ./doc/((<Tutorial.rd|URL:http://github.com/pjotrp/bioruby/raw/documentation/doc/Tutorial.rd>)).
@@ -523,7 +523,7 @@ Array and BioPerl's Bio::SimpleAlign.  A very simple example is:
 
 Read a ClustalW or Muscle 'ALN' alignment file 
 
-   bioruby> aln = Bio::ClustalW::Report.new(File.new('../test/data/clustalw/example1.aln').readlines.join)
+   bioruby> aln = Bio::ClustalW::Report.new(File.read('../test/data/clustalw/example1.aln'))
    bioruby> aln.header
    ==> "CLUSTAL 2.0.9 multiple sequence alignment"
 
@@ -813,19 +813,19 @@ which supports the "-m 0" default and "-m 7" XML type output format.
 
 * For example: 
 
-   bioruby> blast_version = nil; result = []
-   bioruby> Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
-   bioruby>   blast_version = report.version
-   bioruby>   report.iterations.each do |itr|
-   bioruby>     itr.hits.each do |hit|
-   bioruby>       result.push hit.target_id
-   bioruby>     end
-   bioruby>   end
-   bioruby> end
-   bioruby> blast_version
-   ==> "blastp 2.2.18 [Mar-02-2008]"
-   bioruby> result
-   ==> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
+   blast_version = nil; result = []
+   Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
+     blast_version = report.version
+     report.iterations.each do |itr|
+       itr.hits.each do |hit|
+         result.push hit.target_id
+       end
+     end
+   end
+   blast_version
+   =!> "blastp 2.2.18 [Mar-02-2008]"
+   result
+   =!> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
 
 * another example:
 
