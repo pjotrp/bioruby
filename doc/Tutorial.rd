@@ -1,12 +1,10 @@
 # This document is generated with a version of rd2html (part of Hiki)
 #
-# A possible test run could be from rdtool (on Debian package rdtool)
-#
-#   rd2 $BIORUBYPATH/doc/Tutorial.rd
+#   rd2 Tutorial.rd
 #
 # or with style sheet:
 #
-#   rd2 -r rd/rd2html-lib.rb --with-css=bioruby.css $BIORUBYPATH/doc/Tutorial.rd > ~/bioruby.html
+#   rd2 -r rd/rd2html-lib.rb --with-css=bioruby.css Tutorial.rd > Tutorial.rd.html
 #
 # in Debian:
 #
@@ -17,9 +15,18 @@
 # To add tests run Toshiaki's bioruby shell and paste in the query plus
 # results.
 #
-# To run the embedded Ruby doctests you can use the rubydoctest tool, part
-# of the bioruby-support repository at http://github.com/pjotrp/bioruby-support/
+# To run the embedded Ruby doctests you can use the rubydoctest tool, though
+# it needs a little conversion. Like:
 #
+#   cat Tutorial.rd | sed -e "s,bioruby>,>>," | sed "s,==>,=>," > Tutorial.rd.tmp
+#   rubydoctest Tutorial.rd.tmp
+#
+# Rubydoctest is useful to verify an example in this document (still) works
+#
+#
+#
+
+bioruby> $: << '../lib'
 
 =begin
 #doctest Testing bioruby
@@ -201,7 +208,6 @@ use all methods on the subsequence. For example,
    bioruby> seq.window_search(15, 3) { | s | a.push s.translate }
    bioruby> a
    ==> ["MHAIK", "HAIKL", "AIKLI", "IKLIP", "KLIPI", "LIPIR", "IPIRS", "PIRSS", "IRSSR", "RSSRS", "SSRSS", "SRSSK", "RSSKK", "SSKKK"]
-
 
 Finally, the window_search method returns the last leftover
 subsequence. This allows for example
@@ -813,19 +819,19 @@ which supports the "-m 0" default and "-m 7" XML type output format.
 
 * For example: 
 
-   blast_version = nil; result = []
-   Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
-     blast_version = report.version
-     report.iterations.each do |itr|
-       itr.hits.each do |hit|
-         result.push hit.target_id
-       end
-     end
-   end
-   blast_version
-   =!> "blastp 2.2.18 [Mar-02-2008]"
-   result
-   =!> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
+    blast_version = nil; result = []
+    Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
+      blast_version = report.version
+      report.iterations.each do |itr|
+        itr.hits.each do |hit|
+          result.push hit.target_id
+        end
+      end
+    end
+    blast_version
+    ==!> "blastp 2.2.18 [Mar-02-2008]"
+    result
+    ==!> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
 
 * another example:
 
@@ -871,6 +877,8 @@ When you write above routines, please send to the BioRuby project and
 they may be included.
 
 == Generate a reference list using PubMed (Bio::PubMed)
+=end
+(EDITORs NOTE: examples in this section do not work and should be rewritten.)
 
 Below script is an example which seaches PubMed and creates a reference list.
 
@@ -919,6 +927,7 @@ bold and italic font output.
 
 (EDITORs NOTE: do we have some simple object that can be queried for
 author, title etc.?)
+=begin
 
 Nowadays using NCBI E-Utils is recommended. Use Bio::PubMed.esearch
 and Bio::PubMed.efetch instead of above methods.
@@ -927,6 +936,11 @@ and Bio::PubMed.efetch instead of above methods.
     #!/usr/bin/env ruby
 
     require 'bio'
+
+    # NCBI announces that queries without email address will return error
+    # after June 2010. When you modify the script, please enter your email
+    # address instead of the staff's.
+    Bio::NCBI.default_email = 'staff@bioruby.org'
 
     keywords = ARGV.join(' ')
 
