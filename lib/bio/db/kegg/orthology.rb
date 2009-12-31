@@ -5,10 +5,11 @@
 # Copyright::  Copyright (C) 2003 Masumi Itoh <m@bioruby.org>
 # License::    The Ruby License
 #
-# $Id: orthology.rb,v 1.10 2007/12/14 16:19:54 k Exp $
+# $Id:$
 #
 
 require 'bio/db'
+require 'bio/db/kegg/common'
 
 module Bio
 class KEGG
@@ -26,6 +27,16 @@ class ORTHOLOGY < KEGGDB
   
   DELIMITER	= RS = "\n///\n"
   TAGSIZE	= 12
+
+  include Common::DblinksAsHash
+  # Returns a Hash of the DB name and an Array of entry IDs in DBLINKS field.
+  def dblinks_as_hash; super; end if false #dummy for RDoc
+  alias dblinks dblinks_as_hash
+
+  include Common::GenesAsHash
+  # Returns a Hash of the organism ID and an Array of entry IDs in GENES field.
+  def genes_as_hash; super; end if false #dummy for RDoc
+  alias genes genes_as_hash
 
   # Reads a flat file format entry of the KO database.
   def initialize(entry)
@@ -68,69 +79,18 @@ class ORTHOLOGY < KEGGDB
   end
   
   # Returns an Array of a database name and entry IDs in DBLINKS field.
-  def dblinks
-    unless @data['DBLINKS']
-      @data['DBLINKS'] = lines_fetch('DBLINKS')
-    end
-    @data['DBLINKS']
-  end
-
-  # Returns a Hash of the DB name and an Array of entry IDs in DBLINKS field.
-  def dblinks_as_hash
-    hash = {}
-    dblinks.each do |line|
-      name, *list = line.split(/\s+/)
-      db = name.downcase.sub(/:/, '')
-      hash[db] = list
-    end
-    return hash
+  def dblinks_as_strings
+    lines_fetch('DBLINKS')
   end
 
   # Returns an Array of the organism ID and entry IDs in GENES field.
-  def genes
-    unless @data['GENES']
-      @data['GENES'] = lines_fetch('GENES')
-    end
-    @data['GENES']
+  def genes_as_strings
+    lines_fetch('GENES')
   end
 
-  # Returns a Hash of the organism ID and an Array of entry IDs in GENES field.
-  def genes_as_hash
-    hash = {}
-    genes.each do |line|
-      name, *list = line.split(/\s+/)
-      org = name.downcase.sub(/:/, '')
-      genes = list.map {|x| x.sub(/\(.*\)/, '')}
-      #names = list.map {|x| x.scan(/.*\((.*)\)/)}
-      hash[org] = genes
-    end
-    return hash
-  end
-  
 end # ORTHOLOGY
     
 end # KEGG
 end # Bio
-
-
-
-if __FILE__ == $0
-
-  require 'bio/io/fetch'
-
-  flat = Bio::Fetch.query('ko', 'K00001')
-  entry = Bio::KEGG::ORTHOLOGY.new(flat)
-
-  p entry.entry_id
-  p entry.name
-  p entry.names
-  p entry.definition
-  p entry.keggclass
-  p entry.keggclasses
-  p entry.pathways
-  p entry.dblinks
-  p entry.genes
-
-end
 
 
