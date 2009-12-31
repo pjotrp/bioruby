@@ -4,8 +4,8 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>doc/Tutorial.rd</title>
-<link href="bioruby.css" type="text/css" rel="stylesheet" />
+<title>Tutorial.rd</title>
+<link href="../lib/bio/shell/rails/vendor/plugins/bioruby/generators/bioruby/templates/bioruby.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
 <h1><a name="label-0" id="label-0">BioRuby Tutorial</a></h1><!-- RDLabel: "BioRuby Tutorial" -->
@@ -13,7 +13,7 @@
 <li>Copyright (C) 2001-2003 KATAYAMA Toshiaki &lt;k .at. bioruby.org&gt;</li>
 <li>Copyright (C) 2005-2009 Pjotr Prins, Naohisa Goto and others</li>
 </ul>
-<p>This document was last modified: 2009/12/27
+<p>This document was last modified: 2009/12/29
 Current editor: Pjotr Prins &lt;p .at. bioruby.org&gt;</p>
 <p>The latest version resides in the GIT source code repository:  ./doc/<a href="http://github.com/pjotrp/bioruby/raw/documentation/doc/Tutorial.rd">Tutorial.rd</a>.</p>
 <h2><a name="label-1" id="label-1">Introduction</a></h2><!-- RDLabel: "Introduction" -->
@@ -414,6 +414,23 @@ a.each_site { |x| p x }
 # clustalw command must be installed.
 factory = Bio::ClustalW.new
 a2 = a.do_align(factory)</pre>
+<p>Read a ClustalW or Muscle 'ALN' alignment file </p>
+<pre>bioruby&gt; aln = Bio::ClustalW::Report.new(File.read('../test/data/clustalw/example1.aln'))
+bioruby&gt; aln.header
+==&gt; "CLUSTAL 2.0.9 multiple sequence alignment"</pre>
+<p>Fetch a sequence</p>
+<pre>bioruby&gt; seq = aln[1]
+bioruby&gt; seq.definition
+==&gt; "gi|115023|sp|P10425|"</pre>
+<p>Get the partial sequences</p>
+<pre>bioruby&gt; seq.to_s[60..120]
+==&gt; "LGYFNG-EAVPSNGLVLNTSKGLVLVDSSWDNKLTKELIEMVEKKFQKRVTDVIITHAHAD"</pre>
+<p>Show the full alignment residue match information for the sequences in the set</p>
+<pre>bioruby&gt; aln.match_line[60..120]
+==&gt; "     .     **. .   ..   ::*:       . * : : .        .: .* * *"</pre>
+<p>Return a Bio::Alignment object</p>
+<pre>bioruby&gt; aln.alignment.consensus[60..120]
+==&gt; "???????????SN?????????????D??????????L??????????????????H?H?D"</pre>
 <h2><a name="label-7" id="label-7">Restriction Enzymes (Bio::RE)</a></h2><!-- RDLabel: "Restriction Enzymes (Bio::RE)" -->
 <p>BioRuby has extensive support for restriction enzymes (REs). It contains a full
 library of commonly used REs (from REBASE) which can be used to cut single
@@ -662,9 +679,9 @@ Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
   end
 end
 blast_version
-# ==&gt; "blastp 2.2.18 [Mar-02-2008]"
+==!&gt; "blastp 2.2.18 [Mar-02-2008]"
 result
-# ==&gt; ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]</pre></li>
+==!&gt; ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]</pre></li>
 <li><p>another example:</p>
 <pre>require 'bio'
 Bio::Blast.reports(ARGF) do |report| 

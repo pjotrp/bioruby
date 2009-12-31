@@ -40,7 +40,7 @@ bioruby> $: << '../lib'
 * Copyright (C) 2001-2003 KATAYAMA Toshiaki <k .at. bioruby.org>
 * Copyright (C) 2005-2009 Pjotr Prins, Naohisa Goto and others
 
-This document was last modified: 2009/12/27
+This document was last modified: 2009/12/29
 Current editor: Pjotr Prins <p .at. bioruby.org>
 
 The latest version resides in the GIT source code repository:  ./doc/((<Tutorial.rd|URL:http://github.com/pjotrp/bioruby/raw/documentation/doc/Tutorial.rd>)).
@@ -531,6 +531,34 @@ Array and BioPerl's Bio::SimpleAlign.  A very simple example is:
   factory = Bio::ClustalW.new
   a2 = a.do_align(factory)
 
+Read a ClustalW or Muscle 'ALN' alignment file 
+
+   bioruby> aln = Bio::ClustalW::Report.new(File.read('../test/data/clustalw/example1.aln'))
+   bioruby> aln.header
+   ==> "CLUSTAL 2.0.9 multiple sequence alignment"
+
+Fetch a sequence
+
+   bioruby> seq = aln[1]
+   bioruby> seq.definition
+   ==> "gi|115023|sp|P10425|"
+
+Get the partial sequences
+
+   bioruby> seq.to_s[60..120]
+   ==> "LGYFNG-EAVPSNGLVLNTSKGLVLVDSSWDNKLTKELIEMVEKKFQKRVTDVIITHAHAD"
+
+Show the full alignment residue match information for the sequences in the set
+
+   bioruby> aln.match_line[60..120]
+   ==> "     .     **. .   ..   ::*:       . * : : .        .: .* * *"
+
+Return a Bio::Alignment object
+
+   bioruby> aln.alignment.consensus[60..120]
+   ==> "???????????SN?????????????D??????????L??????????????????H?H?D"
+
+
 == Restriction Enzymes (Bio::RE)
 
 BioRuby has extensive support for restriction enzymes (REs). It contains a full
@@ -805,9 +833,9 @@ which supports the "-m 0" default and "-m 7" XML type output format.
       end
     end
     blast_version
-    # ==> "blastp 2.2.18 [Mar-02-2008]"
+    ==!> "blastp 2.2.18 [Mar-02-2008]"
     result
-    # ==> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
+    ==!> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
 
 * another example:
 
