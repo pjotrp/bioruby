@@ -15,9 +15,18 @@
 # To add tests run Toshiaki's bioruby shell and paste in the query plus
 # results.
 #
-# To run the embedded Ruby doctests you can use the rubydoctest tool, part
-# of the bioruby-support repository at http://github.com/pjotrp/bioruby-support/
+# To run the embedded Ruby doctests you can use the rubydoctest tool, though
+# it needs a little conversion. Like:
 #
+#   cat Tutorial.rd | sed -e "s,bioruby>,>>," | sed "s,==>,=>," > Tutorial.rd.tmp
+#   rubydoctest Tutorial.rd.tmp
+#
+# Rubydoctest is useful to verify an example in this document (still) works
+#
+#
+#
+
+bioruby> $: << '../lib'
 
 =begin
 #doctest Testing bioruby
@@ -782,19 +791,19 @@ which supports the "-m 0" default and "-m 7" XML type output format.
 
 * For example: 
 
-   bioruby> blast_version = nil; result = []
-   bioruby> Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
-   bioruby>   blast_version = report.version
-   bioruby>   report.iterations.each do |itr|
-   bioruby>     itr.hits.each do |hit|
-   bioruby>       result.push hit.target_id
-   bioruby>     end
-   bioruby>   end
-   bioruby> end
-   bioruby> blast_version
-   ==> "blastp 2.2.18 [Mar-02-2008]"
-   bioruby> result
-   ==> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
+    blast_version = nil; result = []
+    Bio::Blast.reports(File.new("../test/data/blast/blastp-multi.m7")) do |report|
+      blast_version = report.version
+      report.iterations.each do |itr|
+        itr.hits.each do |hit|
+          result.push hit.target_id
+        end
+      end
+    end
+    blast_version
+    # ==> "blastp 2.2.18 [Mar-02-2008]"
+    result
+    # ==> ["BAB38768", "BAB38768", "BAB38769", "BAB37741"]
 
 * another example:
 
@@ -861,6 +870,8 @@ Prints each mosq. accession/uniq identifier and the GO terms from the Drosphila
 homologues.
 
 == Generate a reference list using PubMed (Bio::PubMed)
+=end
+(EDITORs NOTE: examples in this section do not work and should be rewritten.)
 
 Below script is an example which seaches PubMed and creates a reference list.
 
@@ -909,6 +920,7 @@ bold and italic font output.
 
 (EDITORs NOTE: do we have some simple object that can be queried for
 author, title etc.?)
+=begin
 
 Nowadays using NCBI E-Utils is recommended. Use Bio::PubMed.esearch
 and Bio::PubMed.efetch instead of above methods.
@@ -917,6 +929,11 @@ and Bio::PubMed.efetch instead of above methods.
     #!/usr/bin/env ruby
 
     require 'bio'
+
+    # NCBI announces that queries without email address will return error
+    # after June 2010. When you modify the script, please enter your email
+    # address instead of the staff's.
+    Bio::NCBI.default_email = 'staff@bioruby.org'
 
     keywords = ARGV.join(' ')
 
