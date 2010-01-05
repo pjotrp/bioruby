@@ -1,7 +1,7 @@
 #
 # test/unit/bio/db/test_clustalw.rb - Unit test for Bio::ClustalWFormat
 #
-# Copyright::  Copyright (C) 2009 Pjotr Prins <p@bioruby.org>
+# Copyright::  Copyright (C) 2010 Pjotr Prins <pjotr.prins@thebird.nl> 
 # License::    The Ruby License
 #
 
@@ -13,13 +13,13 @@ require 'bio/appl/clustalw/report'
 
 module Bio
 
-  class TestClustalWFormat < Test::Unit::TestCase
+  class TestClustalWReport < Test::Unit::TestCase
 
     def setup
       test_data_path = Pathname.new(File.join(BioRubyTestDataPath, 'clustalw')).cleanpath.to_s
       aln_filename = File.join(test_data_path, 'example1.aln')
-      text = File.new(aln_filename).readlines
-      @aln = Bio::ClustalW::Report.new(text.join)
+      text = File.read(aln_filename)
+      @aln = Bio::ClustalW::Report.new(text)
     end
 
     # CLUSTAL 2.0.9 multiple sequence alignment
@@ -40,12 +40,12 @@ module Bio
     end
 
     def test_sequences
-      seq = @aln[0]
+      seq = @aln.get_sequence(0)
       assert_equal('query',seq.definition)
-      assert_equal('-MKNTLLKLGVCV',seq.to_s[0..12])
-      seq = @aln[1]
+      assert_equal("-MKNTLLKLGVCVSLLGITPFVSTISSVQAERTVEHKVIKNETGTISISQLNKNVWVHTELGYFSG-EAVPSNGLVLNTSKGLVLVDSSWDDKLTKELIEMVEKKFKKRVTDVIITHAHADRIGGMKTLKERGIKAHSTALTAELAKKNG--------------------YEEPLGDLQSVTNLKFGN----MKVETFYPGKGHTEDNIVVWLPQYQILAGGCLVKSASSKDLGNVADAYVNEWSTSIENVLKRYGNINLVVPGHGEVGDR-----GLLLHTLDLLK---------------------------------------------------------------------",seq.to_s)
+      seq = @aln.get_sequence(1)
       assert_equal('gi|115023|sp|P10425|',seq.definition)
-      assert_equal('MKKNTLLKVGLCV',seq.to_s[0..12])
+      assert_equal("MKKNTLLKVGLCVSLLGTTQFVSTISSVQASQKVEQIVIKNETGTISISQLNKNVWVHTELGYFNG-EAVPSNGLVLNTSKGLVLVDSSWDNKLTKELIEMVEKKFQKRVTDVIITHAHADRIGGITALKERGIKAHSTALTAELAKKSG--------------------YEEPLGDLQTVTNLKFGN----TKVETFYPGKGHTEDNIVVWLPQYQILAGGCLVKSAEAKNLGNVADAYVNEWSTSIENMLKRYRNINLVVPGHGKVGDK-----GLLLHTLDLLK---------------------------------------------------------------------",seq.to_s)
     end
 
     def test_alignment
@@ -53,7 +53,7 @@ module Bio
     end
 
     def test_match_line
-      assert_equal("                                              .: :    *:   .     .     **. .   ..   ::*:       . * : : .        .: .* * *",@aln.match_line[0..120])
+      assert_equal("                                              .: :    *:   .     .     **. .   ..   ::*:       . * : : .        .: .* * *   *   :   * .  :     .     .                       *   :    .: .        .:      .*:  ::***:*  .:* .* :: .           .        ::.:            *              :  .                                                                          " ,@aln.match_line)
     end
 
   end # class TestClustalwFormat
