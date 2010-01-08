@@ -38,7 +38,7 @@ bioruby> $: << '../lib'
 = BioRuby Tutorial
 
 * Copyright (C) 2001-2003 KATAYAMA Toshiaki <k .at. bioruby.org>
-* Copyright (C) 2005-2009 Pjotr Prins, Naohisa Goto and others
+* Copyright (C) 2005-2010 Pjotr Prins, Naohisa Goto and others
 
 This document was last modified: 2009/12/29
 Current editor: Pjotr Prins <p .at. bioruby.org>
@@ -50,8 +50,8 @@ The latest version resides in the GIT source code repository:  ./doc/((<Tutorial
 This is a tutorial for using Bioruby. A basic knowledge of Ruby is required.
 If you want to know more about the programming langauge Ruby we recommend the
 latest Ruby book ((<Programming Ruby|URL:http://www.pragprog.com/titles/ruby>))
-by Dave Thomas and Andy Hunt - some of it is online
-((<here|URL:http://www.rubycentral.com/pickaxe/>)).
+by Dave Thomas and Andy Hunt - the first edition is online
+((<here|URL:http://www.ruby-doc.org/docs/ProgrammingRuby/>)).
 
 For BioRuby you need to install Ruby and the BioRuby package on your computer
 
@@ -68,8 +68,13 @@ If you see no such thing you'll have to install Ruby using your installation
 manager. For more information see the
 ((<Ruby|URL:http://www.ruby-lang.org/en/>)) website.
 
-Once Ruby is works download and install Bioruby using the links on the
-((<Bioruby|URL:http://bioruby.org/>)) website.
+With Ruby download and install Bioruby using the links on the
+((<Bioruby|URL:http://bioruby.org/>)) website. The recommended installation is via 
+Ruby gems:
+
+  gem install bio
+
+See also the Bioruby ((<wiki|URL:http://bioruby.open-bio.org/wiki/Installation>)).
 
 A lot of BioRuby's documentation exists in the source code and unit tests. To
 really dive in you will need the latest source code tree. The embedded rdoc
