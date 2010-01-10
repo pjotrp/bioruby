@@ -37,8 +37,8 @@ module Bio::Html
     # Instantiate an HtmlAlignment object 
     #
     #   >> simple = Bio::Html::HtmlAlignment.new(aln.alignment)
-    #   >> simple.html
-    #   => "xxx"
+    #   >> simple.html()[0..50]
+    #   => "<pre>\nquery                                   -MKNT"
     # 
     #   !> colored = HtmlAlignment(aa_alignment,ColorScheme::Zappo)
     #   !> colored.add_positive_sites(codeml_positive_sites)
@@ -59,12 +59,16 @@ module Bio::Html
 
     # HTML generator
     def html
-      buf = ""
-      # fetch the alignments - is there a better way?
+      html_simple
+    end
+
+    # The most simple form of HTML generator
+    def html_simple
+      ret = "<pre>\n"
       @alignment.each_pair do | id, seq |
-        buf += id.ljust(40)+seq+"\n"
+        ret += id.ljust(40)+seq+"\n"
       end
-      buf
+      ret + "</pre>"
     end
 
   end # Alignment
