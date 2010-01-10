@@ -298,6 +298,12 @@ module Bio
   autoload :ContingencyTable, 'bio/util/contingency_table'
   autoload :RestrictionEnzyme, 'bio/util/restriction_enzyme'
 
+  ### Output generators
+
+  module Html
+    autoload :HtmlAlignment,           'bio/output/html/alignment'
+  end # Html
+
   ### Service libraries
   autoload :Command,        'bio/command'
 
