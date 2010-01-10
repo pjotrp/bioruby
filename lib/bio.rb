@@ -301,7 +301,8 @@ module Bio
   ### Output generators
 
   module Html
-    autoload :HtmlAlignment,           'bio/output/html/alignment'
+    autoload :HtmlAlignment,  'bio/output/html/alignment'
+    autoload :HtmlSequence,   'bio/output/html/sequence'
   end # Html
 
   ### Service libraries
