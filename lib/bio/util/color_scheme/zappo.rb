@@ -13,6 +13,48 @@ require 'bio/util/color_scheme'
 module Bio::ColorScheme
   class Zappo < Simple #:nodoc:
 
+    # Return an HTML description
+    def self.html_help()
+      return <<EOH
+<p /><em>Zappo Colours</em><p />
+  <table width="400" border="1">
+    <tr>
+      <td > Aliphatic/hydrophobic</td>
+      <td bgcolor="#ffafaf">ILVAM </td>
+    </tr>
+    <tr>
+      <td>Aromatic</td>
+      <td bgcolor="#ffc800">FWY</td>
+
+    </tr>
+    <tr>
+      <td>Positive</td>
+      <td bgcolor="#6464ff">KRH</td>
+    </tr>
+    <tr>
+      <td> Negative</td>
+
+      <td bgcolor="#ff0000">DE</td>
+    </tr>
+    <tr>
+      <td>Hydrophilic</td>
+      <td bgcolor="#00ff00">STNQ</td>
+    </tr>
+    <tr>
+
+      <td>conformationally special</td>
+      <td bgcolor="#ff00ff">PG</td>
+    </tr>
+    <tr>
+      <td>Cysteine</td>
+      <td bgcolor="#ffff00">C</td>
+    </tr>
+  </table>
+</div>
+<p />
+EOH
+    end
+
     #########
     protected
     #########

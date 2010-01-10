@@ -108,6 +108,11 @@ module ColorScheme
       @colors[x.to_s.upcase]
     end
 
+    # Override this method to generate HTML help
+    def self.html_help()
+      ""
+    end
+
     def self.colors() @colors end
 
     #######
