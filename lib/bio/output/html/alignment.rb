@@ -61,9 +61,8 @@ module Bio::Html
     def html
       buf = ""
       # fetch the alignments - is there a better way?
-      @alignment.each_with_index do | seq, i |
-        descr = @alignment.keys[i]
-        buf += descr.ljust(40)+seq.seq+"\n"
+      @alignment.each_pair do | id, seq |
+        buf += id.ljust(40)+seq+"\n"
       end
       buf
     end
