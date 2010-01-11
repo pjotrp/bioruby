@@ -63,7 +63,7 @@ module Bio::Html
     #
     # First we create an HTML plugin for Codeml:
     #
-    #   >> plugin = Html::HtmlPositiveSites.new(m0_3.nb_sites,'color','M0-3')
+    #   >> plugin = Html::HtmlPositiveSites.new(m0_3.nb_sites,'graph_color','M0-3')
     #
     # and add the output to the HtmlAlignment
     #
@@ -72,7 +72,7 @@ module Bio::Html
     # Now we add another line containing the results for M7-8
     #
     #   >> m7_8 = PAML::Codeml::Report.new(bufm7m8)
-    #   >> colored.add_info_line(Html::HtmlPositiveSites.new(m7_8.sites,'color','M7-8'))
+    #   >> colored.add_info_line(Html::HtmlPositiveSites.new(m7_8.sites,'graph_color','M7-8'))
     # 
     # regenerate the HTML
     #
@@ -174,7 +174,7 @@ module Bio::Html
       end
       ret += '<tr><td>Consensus</td><td>'+consensus.gsub(/\s/,'&nbsp;')+"</td></tr>\n"
       @info_plugins.each do | plugin |
-        ret += '<tr><td>'+plugin.descr+'</td><td>'+plugin.info.gsub(/\s/,'&nbsp;')+"</td></tr>\n"
+        ret += '<tr><td>'+plugin.descr+'</td><td>'+plugin.info+"</td></tr>\n"
       end
       ret += "\n</table></font><p />"
       ret += footer if not opts[:no_footer]
