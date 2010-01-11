@@ -170,11 +170,11 @@ module Bio::Html
       ret += '<p /><font face="courier"><table>'+"\n"
       @alignment.each_pair do | id, seq |
         h = Html::HtmlSequence.new(seq)
-        ret += '<tr><td>'+id+'</td><td>'+h.html_color+"</td></tr>\n"
+        ret += '<tr><td style="white-space: nowrap">'+id+'</td><td>'+h.html_color+"</td></tr>\n"
       end
       ret += '<tr><td>Consensus</td><td>'+consensus.gsub(/\s/,'&nbsp;')+"</td></tr>\n"
       @info_plugins.each do | plugin |
-        ret += '<tr><td>'+plugin.descr+'</td><td>'+plugin.info+"</td></tr>\n"
+        ret += '<tr><td style="white-space: nowrap">'+plugin.descr+'</td><td>'+plugin.info+"</td></tr>\n"
       end
       ret += "\n</table></font><p />"
       ret += footer if not opts[:no_footer]
