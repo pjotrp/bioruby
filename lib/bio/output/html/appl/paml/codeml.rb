@@ -20,7 +20,9 @@ module Bio::Html
     # == Examples
     #
 
-    # Create plugin with PositiveSites object
+    # Create plugin with PositiveSites object. Standard graphs are available
+    # from the PositiveSites object. In addition you can choose _graph_='color'.
+    # So _graph_ can be one of 'graph', 'graph_omega', 'graph_AA' and 'color'.
     def initialize sites, graph='graph'
       @sites = sites
       @graph = graph
@@ -31,9 +33,30 @@ module Bio::Html
       @sites.descr
     end
 
-    # Create a graph
+    # Create a graph - return an (HTML) String 
     def info
-      @sites.send(@graph)
+      if @graph=='color'
+        color()
+      else
+        @sites.send(@graph)
+      end
+    end
+
+    # Return a color HTML graph
+    def color
+      @sites.graph_omega
+    end
+
+    # Return some help
+    def html_help
+      ret = <<INFO
+      <p />
+      Sites showing evidence of positive selection pressure. Number is 
+      posterior mean of dN/dS (w) and an asterisk '*' when w>9.
+      <p />
+INFO
+      ret += '<pre>'+@sites.to_s+'</pre>'
+      ret
     end
 
   end # HtmlPositiveSites
