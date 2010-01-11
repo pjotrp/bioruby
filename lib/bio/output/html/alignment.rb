@@ -23,7 +23,7 @@ module Bio::Html
     #
     #   >> require 'bio'
     #   >> require 'bio/test/biotestfile'
-    #   >> pmlbuf = BioTestFile.read('paml/codeml/models/results0-3.txt')
+    #   >> codemlbuf = BioTestFile.read('paml/codeml/models/results0-3.txt')
     #   >> alnbuf = BioTestFile.read('paml/codeml/models/aa.aln')
     #++
     #
@@ -55,16 +55,16 @@ module Bio::Html
     # 
     # Now we want to add extra information to the alignment. In this example we
     # want to invoke Bioruby's PAML codeml parser, after having read the
-    # contents of the codeml result file into _pmlbuf_ (for example using
+    # contents of the codeml result file into _codemlbuf_ (for example using
     # File.read)
     #
-    #   >> codeml = PAML::Codeml::Report.new(pmlbuf)
+    #   >> codeml = PAML::Codeml::Report.new(codemlbuf)
     #
     # First we create an HTML plugin for Codeml:
     #
-    #   >> plugin = Html::HtmlPositiveSites.new(codeml.nb_sites,'graph_seq')
+    #   >> plugin = Html::HtmlPositiveSites.new(codeml.nb_sites,'graph_omega')
     #
-    # and add it to the HtmlAlignment
+    # and add the output to the HtmlAlignment
     #
     #   >> colored.add_info_line(plugin)
     # 
@@ -165,7 +165,7 @@ module Bio::Html
       end
       ret += '<tr><td>Consensus</td><td>'+consensus.gsub(/\s/,'&nbsp;')+"</td></tr>\n"
       @info_plugins.each do | plugin |
-        ret += '<tr><td>'+plugin.descr+'</td><td>'+plugin.info.gsub(/\s/,'_')+"</td></tr>\n"
+        ret += '<tr><td>'+plugin.descr+'</td><td>'+plugin.info.gsub(/\s/,'&nbsp;')+"</td></tr>\n"
       end
       ret += "\n</table></font><p />"
       ret += footer if not opts[:no_footer]
