@@ -24,7 +24,7 @@ module Bio::Html
     #   >> require 'bio'
     #   >> require 'bio/test/biotestfile'
     #   >> pmlbuf = BioTestFile.read('paml/codeml/models/results0-3.txt')
-    #   >> alnbuf = BioTestFile.read('clustalw/example1.aln')
+    #   >> alnbuf = BioTestFile.read('paml/codeml/models/aa.aln')
     #++
     #
     # alnbuf contains the contents of a Clustal alignment file
@@ -40,7 +40,7 @@ module Bio::Html
     # Ascertain we have a result
     #
     #   >> html[8..58]
-    #   => "<pre>\nquery                                   -MKNT"
+    #   => "<pre>\nPITG_23265T0                            MKSQA"
     #
     # Write the HTML to a file (for viewing) with something like
     #
@@ -62,7 +62,7 @@ module Bio::Html
     #
     # First we create an HTML plugin for Codeml:
     #
-    #   >> plugin = Html::HtmlPositiveSites.new(codeml)
+    #   >> plugin = Html::HtmlPositiveSites.new(codeml.nb_sites)
     #
     # and add it to the HtmlAlignment
     #
@@ -85,10 +85,12 @@ module Bio::Html
     def initialize alignment, options = {}
       @alignment = alignment
       @options = options
+      @info_plugins = []
     end
 
     # :nodoc:
     def add_info_line plugin
+      @info_plugins.push plugin
     end
 
     # Show a section title
@@ -142,6 +144,9 @@ module Bio::Html
         ret += id.ljust(ljust)+seq+"\n"
       end
       ret += "Consensus".ljust(ljust)+consensus
+      @info_plugins.each do | plugin |
+        ret += "\n"+plugin.id.ljust(ljust)+plugin.info
+      end
       ret += "\n</pre>"
       ret += footer if not opts[:no_footer]
       ret
@@ -159,6 +164,9 @@ module Bio::Html
         ret += '<tr><td>'+id+'</td><td>'+h.html_color+"</td></tr>\n"
       end
       ret += '<tr><td>Consensus</td><td>'+consensus.gsub(/\s/,'&nbsp;')+"</td></tr>\n"
+      @info_plugins.each do | plugin |
+        ret += '<tr><td>'+plugin.descr+'</td><td>'+plugin.info.gsub(/\s/,'_')+"</td></tr>\n"
+      end
       ret += "\n</table></font><p />"
       ret += footer if not opts[:no_footer]
       ret
