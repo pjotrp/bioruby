@@ -303,6 +303,7 @@ module Bio
   module Html
     autoload :HtmlAlignment,  'bio/output/html/alignment'
     autoload :HtmlSequence,   'bio/output/html/sequence'
+    autoload :HtmlPositiveSites,   'bio/output/html/appl/paml/codeml'
   end # Html
 
   ### Service libraries

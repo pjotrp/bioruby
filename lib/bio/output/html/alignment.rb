@@ -18,15 +18,12 @@ module Bio::Html
     #
     # == Examples
     #
-    # Show evidence of positive selection pressure, as calculated
-    # by PAML's codeml
-    #
     #--
     # The following few lines are not shown in the rdoc documentation
     #
     #   >> require 'bio'
     #   >> require 'bio/test/biotestfile'
-    #   >> buf = BioTestFile.read('paml/codeml/models/results0-3.txt')
+    #   >> pmlbuf = BioTestFile.read('paml/codeml/models/results0-3.txt')
     #   >> alnbuf = BioTestFile.read('clustalw/example1.aln')
     #++
     #
@@ -45,20 +42,36 @@ module Bio::Html
     #   >> html[8..58]
     #   => "<pre>\nquery                                   -MKNT"
     #
-    # Write it to a file (for viewing)
+    # Write the HTML to a file (for viewing) with something like
     #
-    #   #> File.open('test.html','w') {|f| f.write(html) }
-    # 
+    #   >> File.open('test_bw.html','w') {|f| f.write(html) }
+    #
+    # Create nice colorized output for the alignments using the Zappo scheme
+    # with the consensus line
+    #
     #   >> colored = Html::HtmlAlignment.new(aln.alignment, :scheme => ColorScheme::Zappo)
-    #   # !> colored.add_positive_sites(codeml_positive_sites)
     #   >> html = colored.html
-    #   >> File.open('test.html','w') {|f| f.write(html) }
-    #   #> "xxx"
+    #   >> File.open('test_color.html','w') {|f| f.write(html) }
     # 
-    # Invoke Bioruby's PAML codeml parser, after having read the contents
-    # of the codeml result file into _buf_ (for example using File.read)
+    # Now we want to add extra information to the alignment. In this example we
+    # want to invoke Bioruby's PAML codeml parser, after having read the
+    # contents of the codeml result file into _pmlbuf_ (for example using
+    # File.read)
     #
-    #   !> codeml = PAML::Codeml::Report.new(buf)
+    #   >> codeml = PAML::Codeml::Report.new(pmlbuf)
+    #
+    # First we create an HTML plugin for Codeml:
+    #
+    #   >> plugin = Html::HtmlPositiveSites.new(codeml)
+    #
+    # and add it to the HtmlAlignment
+    #
+    #   >> colored.add_info_line(plugin)
+    # 
+    # regenerate the HTML
+    #
+    #   >> html = colored.html
+    #   >> File.open('test_color2.html','w') {|f| f.write(html) }
     #
 
     # Instantiate HtmlAlignment object where _alignment_ is a Bio::Alignment
@@ -72,6 +85,10 @@ module Bio::Html
     def initialize alignment, options = {}
       @alignment = alignment
       @options = options
+    end
+
+    # :nodoc:
+    def add_info_line plugin
     end
 
     # Show a section title
