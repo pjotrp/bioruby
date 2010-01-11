@@ -53,8 +53,8 @@ module Bio::Html
     def html_help
       ret = <<INFO
       <p />
-      Sites showing evidence of positive selection pressure. Number is 
-      posterior mean of dN/dS (w) and an asterisk '*' when w>9.
+      <i>Sites showing evidence of positive selection pressure. Number is 
+      posterior mean of dN/dS (w) and an asterisk '*' when w>9.</i>
       <p />
 INFO
       ret += '<pre>'+@sites.to_s+'</pre>'
