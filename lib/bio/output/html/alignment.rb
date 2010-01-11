@@ -63,7 +63,7 @@ module Bio::Html
     #
     # First we create an HTML plugin for Codeml:
     #
-    #   >> plugin = Html::HtmlPositiveSites.new(m0_3.nb_sites,'color')
+    #   >> plugin = Html::HtmlPositiveSites.new(m0_3.nb_sites,'color','M0-3')
     #
     # and add the output to the HtmlAlignment
     #
@@ -72,7 +72,8 @@ module Bio::Html
     # Now we add another line containing the results for M7-8
     #
     #   >> m7_8 = PAML::Codeml::Report.new(bufm7m8)
-    #   >> colored.add_info_line(Html::HtmlPositiveSites.new(m7_8.sites,'color'))
+    #   >> colored.add_info_line(Html::HtmlPositiveSites.new(m7_8.nb_sites,'color','M7-8'))
+    #   >> colored.add_info_line(Html::HtmlPositiveSites.new(m7_8.sites,'color','M7-8'))
     # 
     # regenerate the HTML
     #

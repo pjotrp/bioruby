@@ -23,14 +23,16 @@ module Bio::Html
     # Create plugin with PositiveSites object. Standard graphs are available
     # from the PositiveSites object. In addition you can choose _graph_='color'.
     # So _graph_ can be one of 'graph', 'graph_omega', 'graph_AA' and 'color'.
-    def initialize sites, graph='graph'
+    # The _descr_ parameter allows adding some extra information (e.g. the Model)
+    def initialize sites, graph='graph', descr=''
       @sites = sites
       @graph = graph
+      @extra_descr = descr
     end
 
     # Short description of the positive selection method
     def descr
-      @sites.descr
+      @extra_descr+' '+@sites.descr
     end
 
     # Create a graph - return an (HTML) String 
