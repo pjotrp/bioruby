@@ -62,7 +62,7 @@ module Bio::Html
     #
     # First we create an HTML plugin for Codeml:
     #
-    #   >> plugin = Html::HtmlPositiveSites.new(codeml.nb_sites)
+    #   >> plugin = Html::HtmlPositiveSites.new(codeml.nb_sites,'graph_seq')
     #
     # and add it to the HtmlAlignment
     #
