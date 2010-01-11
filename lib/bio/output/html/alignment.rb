@@ -23,7 +23,8 @@ module Bio::Html
     #
     #   >> require 'bio'
     #   >> require 'bio/test/biotestfile'
-    #   >> codemlbuf = BioTestFile.read('paml/codeml/models/results0-3.txt')
+    #   >> bufm0m3 = BioTestFile.read('paml/codeml/models/results0-3.txt')
+    #   >> bufm7m8 = BioTestFile.read('paml/codeml/models/results7-8.txt')
     #   >> alnbuf = BioTestFile.read('paml/codeml/models/aa.aln')
     #++
     #
@@ -55,18 +56,23 @@ module Bio::Html
     # 
     # Now we want to add extra information to the alignment. In this example we
     # want to invoke Bioruby's PAML codeml parser, after having read the
-    # contents of the codeml result file into _codemlbuf_ (for example using
+    # contents of the codeml result file into _bufm0m3_ (for example using
     # File.read)
     #
-    #   >> codeml = PAML::Codeml::Report.new(codemlbuf)
+    #   >> m0_3 = PAML::Codeml::Report.new(bufm0m3)
     #
     # First we create an HTML plugin for Codeml:
     #
-    #   >> plugin = Html::HtmlPositiveSites.new(codeml.nb_sites,'color')
+    #   >> plugin = Html::HtmlPositiveSites.new(m0_3.nb_sites,'color')
     #
     # and add the output to the HtmlAlignment
     #
     #   >> colored.add_info_line(plugin)
+    # 
+    # Now we add another line containing the results for M7-8
+    #
+    #   >> m7_8 = PAML::Codeml::Report.new(bufm7m8)
+    #   >> colored.add_info_line(Html::HtmlPositiveSites.new(m7_8.sites,'color'))
     # 
     # regenerate the HTML
     #
