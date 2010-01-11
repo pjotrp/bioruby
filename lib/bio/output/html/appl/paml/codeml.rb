@@ -58,7 +58,7 @@ module Bio::Html
           color = case site.probability
                     when 0.1..0.5 then colors[1]
                     when 0.5..0.8 then colors[2]
-                    when 0.9..0.95 then colors[4]
+                    when 0.0..0.95 then colors[4]
                     when 0.95..0.99 then colors[5]
                     when 0.99..1.0 then colors[6]
                     else colors[0]
