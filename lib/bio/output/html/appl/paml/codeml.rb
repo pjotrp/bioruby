@@ -28,8 +28,7 @@ module Bio::Html
 
     # Short description of the positive selection method
     def descr
-      # @codeml_data.class.to_s
-      'dN/dS (Naive Bayesian)'
+      @sites.descr
     end
 
     # Create a graph
