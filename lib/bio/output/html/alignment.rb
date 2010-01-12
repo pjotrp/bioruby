@@ -174,7 +174,9 @@ module Bio::Html
       end
       ret += '<tr><td>Consensus</td><td>'+consensus.gsub(/\s/,'&nbsp;')+"</td></tr>\n"
       @info_plugins.each do | plugin |
-        ret += '<tr><td style="white-space: nowrap">'+plugin.descr+'</td><td>'+plugin.info+"</td></tr>\n"
+        info = plugin.info
+        info = "ERROR" if !info
+        ret += '<tr><td style="white-space: nowrap">'+plugin.descr+'</td><td>'+info+"</td></tr>\n"
       end
       ret += "\n</table></font><p />"
       ret += footer if not opts[:no_footer]

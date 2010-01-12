@@ -52,6 +52,7 @@ module Bio::Html
     # Return a color HTML graph based on probability
     def graph_color
       colors = COLORS
+      return '== EMPTY ==' if @sites.size == 0
       @sites.graph_to_s(lambda { |site| 
           symbol = "*"
           symbol = site.omega.to_i.to_s if site.omega.abs <= 10.0
@@ -78,7 +79,7 @@ module Bio::Html
       ret = <<INFO
       <p />
       <i>Sites showing evidence of positive selection pressure. Number is 
-      posterior mean of dN/dS (w) and an asterisk '*' when w>9. The color
+      posterior mean of dN/dS (&omega;) and an asterisk '*' when &omega;>9. The color
       coding reflects the probability:</i>
       <table border="1">
         <tr>
