@@ -6,6 +6,8 @@
 # License::    The Ruby License
 #
 
+require 'cgi'
+
 module Bio::Html
 
   class HtmlAlignment
@@ -86,11 +88,18 @@ module Bio::Html
     # Supported options are
     #
     #   :title       The title
+    #
+    # the following options will also be passed to the Sequence HTML
+    # generator
+    #
     #   :scheme      Color scheme (default Bio::ColorScheme::Zappo)
+    #   :escape_html Escape HTML code (default is true)
     #
     def initialize alignment, options = {}
       @alignment = alignment
       @options = options
+      @escape_html = options[:escape_html]
+      @escape_html = true if @escape_html==nil
       @info_plugins = []
     end
 
@@ -120,7 +129,7 @@ module Bio::Html
 
     # Return the consensus line (match_line)
     def consensus 
-      @alignment.match_line
+      escape_html(@alignment.match_line)
     end
 
     # HTML generator (color support planned for)
@@ -150,7 +159,7 @@ module Bio::Html
       ret += title+"\n" if not opts[:no_title]
       ret += "<pre>\n"
       @alignment.each_pair do | id, seq |
-        ret += id.ljust(ljust)+seq+"\n"
+        ret += escape_html(id.ljust(ljust))+seq+"\n"
       end
       ret += "Consensus".ljust(ljust)+consensus
       @info_plugins.each do | plugin |
@@ -169,8 +178,8 @@ module Bio::Html
       ret += title+"\n" if not opts[:no_title]
       ret += '<p /><font face="courier"><table>'+"\n"
       @alignment.each_pair do | id, seq |
-        h = Html::HtmlSequence.new(seq)
-        ret += '<tr><td style="white-space: nowrap">'+id+'</td><td>'+h.html_color+"</td></tr>\n"
+        h = Html::HtmlSequence.new(seq,@options)
+        ret += '<tr><td style="white-space: nowrap">'+escape_html(id)+'</td><td>'+h.html_color+"</td></tr>\n"
       end
       ret += '<tr><td>Consensus</td><td>'+consensus.gsub(/\s/,'&nbsp;')+"</td></tr>\n"
       @info_plugins.each do | plugin |
@@ -181,6 +190,14 @@ module Bio::Html
       ret += "\n</table></font><p />"
       ret += footer if not opts[:no_footer]
       ret
+    end
+
+    private 
+    
+    # :nodoc:
+    def escape_html buf
+      return CGI.escapeHTML(buf) if @escape_html
+      buf
     end
 
   end # Alignment
