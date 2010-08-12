@@ -928,9 +928,11 @@ module Bio
             parse_metadata($1, line)
             parse_fasta(str) if @in_fasta
           elsif /^\>/ =~ line then
+            # line starts with '>' (gt) and is a FASTA record
             @in_fasta = true
             parse_fasta(str, line)
           elsif line.strip =~ /^$/
+            # empty line
             next
           else
             @records << GFF3::Record.new(line) 
