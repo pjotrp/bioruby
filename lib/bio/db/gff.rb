@@ -930,8 +930,10 @@ module Bio
           elsif /^\>/ =~ line then
             @in_fasta = true
             parse_fasta(str, line)
+          elsif line.strip =~ /^$/
+            next
           else
-            @records << GFF3::Record.new(line)
+            @records << GFF3::Record.new(line) 
           end
         end
 
