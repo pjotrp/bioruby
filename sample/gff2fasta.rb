@@ -20,9 +20,13 @@ require 'bio'
 include Bio
 
 usage = <<USAGE
+gff3fasta outputs GFF3 contained FASTA records
 
-Usage: gff2fasta.rb infile
+Usage: gff3fasta.rb infile
 
+Example:
+
+  gff3fasta.rb ../test/data/gff/test.gff3
 USAGE
 
 if ARGV.size == 0
@@ -31,9 +35,11 @@ if ARGV.size == 0
 end
 
 ARGV.each do | fn |
-  Bio::GFF::GFF3.new(fn).each do | item |
-    rec = Bio::FastaFormat.new('> '+item.definition.strip+"\n"+item.data)
-    print rec
+  gff3 = Bio::GFF::GFF3.new(File.read(fn))
+  # gff3.records.each do | rec |
+  # end
+  gff3.sequences.each do | item |
+    print item.to_fasta(item.entry_id, 70)
   end
 end
 

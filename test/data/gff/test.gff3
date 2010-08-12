@@ -41,3 +41,21 @@ Contig4	confirmed	gene	32000	35000	.	+	.	ID=Misc:thing1;gene=gene-9
 Contig4	confirmed	mRNA	32000	35000	.	+	.	ID=Misc:thing2;mRNA=trans-9;gene=gene-9
 Contig4	confirmed	CDS	32000	35000	.	+	.	ID=Misc:thing3;mRNA=trans-9
 
+##gff-version 3
+##sequence-region test01 1 400
+test01	RANDOM	contig	1	400	.	+	.	ID=test01;Note=this is test
+test01	.	mRNA	101	230	.	+	.	ID=mrna01;Name=testmRNA;Note=this is test mRNA
+test01	.	mRNA	101	280	.	+	.	ID=mrna01a;Name=testmRNAalterative;Note=test of alternative splicing variant
+test01	.	exon	101	160	.	+	.	ID=exon01;Name=exon01;Alias=exon 1;Parent=mrna01,mrna01a
+test01	.	exon	201	230	.	+	.	ID=exon02;Name=exon02;Alias=exon 2;Parent=mrna01
+test01	.	exon	251	280	.	+	.	ID=exon02a;Name=exon02a;Alias=exon 2a;Parent=mrna01a
+test01	.	Match	101	123	.	.	.	ID=match01;Name=match01;Target=EST101 1 21;Gap=M8 D3 M6 I1 M6
+##FASTA
+>test01
+ACGAAGATTTGTATGACTGATTTATCCTGGACAGGCATTGGTCAGATGTCTCCTTCCGTATCGTCGTTTA
+GTTGCAAATCCGAGTGTTCGGGGGTATTGCTATTTGCCACCTAGAAGCGCAACATGCCCAGCTTCACACA
+CCATAGCGAACACGCCGCCCCGGTGGCGACTATCGGTCGAAGTTAAGACAATTCATGGGCGAAACGAGAT
+AATGGGTACTGCACCCCTCGTCCTGTAGAGACGTCACAGCCAACGTGCCTTCTTATCTTGATACATTAGT
+GCCCAAGAATGCGATCCCAGAAGTCTTGGTTCTAAAGTCGTCGGAAAGATTTGAGGAACTGCCATACAGC
+CCGTGGGTGAAACTGTCGACATCCATTGTGCGAATAGGCCTGCTAGTGAC
+
