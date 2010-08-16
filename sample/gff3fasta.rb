@@ -39,7 +39,8 @@ ARGV.each do | fn |
   # gff3.records.each do | rec |
   # end
   gff3.sequences.each do | item |
-    print item.to_fasta(item.entry_id, 70)
+    # print item.to_fasta(item.entry_id, 70)
+    print item.output(:fasta)
   end
 end
 
