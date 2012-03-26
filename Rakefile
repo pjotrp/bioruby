@@ -9,8 +9,25 @@ require 'rubygems'
 require 'erb'
 require 'rake/testtask'
 require 'rake/packagetask'
-require 'rake/gempackagetask'
-require 'rake/rdoctask'
+
+begin
+  require 'rubygems/package_task'
+rescue LoadError
+  # old RubyGems/Rake version
+  require 'rake/gempackagetask'
+end
+
+begin
+  require 'rdoc/task'
+rescue LoadError
+  # old RDoc/Rake version
+  require 'rake/rdoctask'
+end
+
+# workaround for new module name
+unless defined? Rake::GemPackageTask then
+  Rake::GemPackageTask = Gem::PackageTask
+end
 
 load "./lib/bio/version.rb"
 BIO_VERSION_RB_LOADED = true
@@ -31,6 +48,16 @@ Rake::TestTask.new do |t|
   t.test_files = FileList["test/{unit,functional}/**/test_*.rb"]
 end
 
+Rake::TestTask.new do |t|
+  t.name = :"test-all"
+  t.test_files = FileList["test/{unit,functional,network}/**/test_*.rb"]
+end
+
+Rake::TestTask.new do |t|
+  t.name = :"test-network"
+  t.test_files = FileList["test/network/**/test_*.rb"]
+end
+
 # files not included in gem but included in tar archive
 tar_additional_files = []
 
@@ -38,7 +65,9 @@ GEM_SPEC_FILE = "bioruby.gemspec"
 GEM_SPEC_TEMPLATE_FILE = "bioruby.gemspec.erb"
 
 # gets gem spec string
-gem_spec_string = ERB.new(File.read(GEM_SPEC_TEMPLATE_FILE)).result
+gem_spec_string = File.open(GEM_SPEC_TEMPLATE_FILE, "rb") do |f|
+                    ERB.new(f.read).result
+                  end
 
 # gets gem spec object
 spec = eval(gem_spec_string)
@@ -68,7 +97,7 @@ desc "Update #{GEM_SPEC_FILE}"
 file GEM_SPEC_FILE => [ GEM_SPEC_TEMPLATE_FILE, 'Rakefile',
                         'lib/bio/version.rb' ] do |t|
   puts "creates #{GEM_SPEC_FILE}"
-  File.open(t.name, 'w') do |w|
+  File.open(t.name, 'wb') do |w|
     w.print gem_spec_string
   end
 end
@@ -139,5 +168,14 @@ task :retutorial2html do
   HTMLFILES_TUTORIAL.each do |x|
     Rake::Task[x].execute(nil)
   end
+end
+
+# ChangeLog
+desc "Force update ChangeLog using git log"
+task :rechangelog do
+  # The tag name in the command line should be changed
+  # after releasing new version, updating ChangeLog,
+  # and doing "git mv ChangeLog doc/ChangeLog-X.X.X".
+  sh "git log --stat --summary 1.4.2..HEAD > ChangeLog"
 end
 

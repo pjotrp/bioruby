@@ -3,7 +3,7 @@
 # 
 Gem::Specification.new do |s|
   s.name = 'bio'
-  s.version = "1.4.2"
+  s.version = "1.4.2.5000"
 
   s.author = "BioRuby project"
   s.email = "staff@bioruby.org"
@@ -33,12 +33,14 @@ Gem::Specification.new do |s|
     "bioruby.gemspec",
     "bioruby.gemspec.erb",
     "doc/ChangeLog-before-1.3.1",
+    "doc/ChangeLog-before-1.4.2",
     "doc/Changes-0.7.rd",
     "doc/Changes-1.3.rdoc",
     "doc/KEGG_API.rd",
     "doc/KEGG_API.rd.ja",
     "doc/RELEASE_NOTES-1.4.0.rdoc",
     "doc/RELEASE_NOTES-1.4.1.rdoc",
+    "doc/RELEASE_NOTES-1.4.2.rdoc",
     "doc/Tutorial.rd",
     "doc/Tutorial.rd.html",
     "doc/Tutorial.rd.ja",
@@ -304,7 +306,6 @@ Gem::Specification.new do |s|
     "lib/bio/util/restriction_enzyme/string_formatting.rb",
     "lib/bio/util/sirna.rb",
     "lib/bio/version.rb",
-    "rdoc.zsh",
     "sample/any2fasta.rb",
     "sample/biofetch.rb",
     "sample/color_scheme_na.rb",
@@ -405,6 +406,7 @@ Gem::Specification.new do |s|
     "test/data/blast/blastp-multi.m7",
     "test/data/clustalw/example1.aln",
     "test/data/command/echoarg2.bat",
+    "test/data/command/echoarg2.sh",
     "test/data/embl/AB090716.embl",
     "test/data/embl/AB090716.embl.rel89",
     "test/data/fasta/EFTU_BACSU.fasta",
@@ -503,16 +505,17 @@ Gem::Specification.new do |s|
     "test/data/soft/GDS100_partial.soft",
     "test/data/soft/GSE3457_family_partial.soft",
     "test/data/uniprot/p53_human.uniprot",
-    "test/functional/bio/appl/blast/test_remote.rb",
-    "test/functional/bio/appl/test_blast.rb",
-    "test/functional/bio/appl/test_pts1.rb",
-    "test/functional/bio/io/test_ddbjrest.rb",
-    "test/functional/bio/io/test_ensembl.rb",
-    "test/functional/bio/io/test_pubmed.rb",
-    "test/functional/bio/io/test_soapwsdl.rb",
-    "test/functional/bio/io/test_togows.rb",
     "test/functional/bio/sequence/test_output_embl.rb",
     "test/functional/bio/test_command.rb",
+    "test/network/bio/appl/blast/test_remote.rb",
+    "test/network/bio/appl/test_blast.rb",
+    "test/network/bio/appl/test_pts1.rb",
+    "test/network/bio/io/test_ddbjrest.rb",
+    "test/network/bio/io/test_ensembl.rb",
+    "test/network/bio/io/test_pubmed.rb",
+    "test/network/bio/io/test_soapwsdl.rb",
+    "test/network/bio/io/test_togows.rb",
+    "test/network/bio/test_command.rb",
     "test/runner.rb",
     "test/unit/bio/appl/bl2seq/test_report.rb",
     "test/unit/bio/appl/blast/test_ncbioptions.rb",
@@ -641,12 +644,14 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = [ 
     "ChangeLog",
     "KNOWN_ISSUES.rdoc",
+    "LEGAL",
     "README.rdoc",
     "README_DEV.rdoc",
     "RELEASE_NOTES.rdoc",
     "doc/Changes-1.3.rdoc",
     "doc/RELEASE_NOTES-1.4.0.rdoc",
-    "doc/RELEASE_NOTES-1.4.1.rdoc"
+    "doc/RELEASE_NOTES-1.4.1.rdoc",
+    "doc/RELEASE_NOTES-1.4.2.rdoc"
   ]
   s.rdoc_options << '--main' << 'README.rdoc'
   s.rdoc_options << '--title' << 'BioRuby API documentation'
