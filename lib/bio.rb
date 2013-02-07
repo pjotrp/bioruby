@@ -110,7 +110,6 @@ module Bio
     autoload :KGML,         'bio/db/kegg/kgml'
     autoload :PATHWAY,      'bio/db/kegg/pathway'
     autoload :MODULE,       'bio/db/kegg/module'
-    autoload :Taxonomy,     'bio/db/kegg/taxonomy'
   end
 
   ## other formats
@@ -168,19 +167,13 @@ module Bio
 
   autoload :PubMed,         'bio/io/pubmed'
   autoload :DAS,            'bio/io/das'
-  autoload :DBGET,          'bio/io/dbget'
 
-  autoload :Ensembl,        'bio/io/ensembl'
   autoload :Hinv,           'bio/io/hinv'
 
   ## below are described in bio/appl/blast.rb
   #class Blast
   #  autoload :Fastacmd,     'bio/io/fastacmd'
   #end
-
-  class KEGG
-    autoload :API,          'bio/io/keggapi'
-  end
 
   ## below are described in bio/db/genbank/ddbj.rb
   #class DDBJ
@@ -198,7 +191,6 @@ module Bio
   autoload :NCBI,         'bio/io/ncbirest'
   ## below are described in bio/io/ncbirest.rb
   #class NCBI
-  #  autoload :SOAP,       'bio/io/ncbisoap'
   #  autoload :REST,       'bio/io/ncbirest'
   #end
 
@@ -303,19 +295,6 @@ module Bio
 
   ### Service libraries
   autoload :Command,        'bio/command'
-
-  ### Provide BioRuby shell 'command' also as 'Bio.command' (like ChemRuby)
-
-  def self.method_missing(*args)
-    require 'bio/shell'
-    extend Bio::Shell
-    public_class_method(*Bio::Shell.private_instance_methods)
-    if Bio.respond_to?(args.first)
-      Bio.send(*args)
-    else
-      raise NameError
-    end
-  end
 
 end
 

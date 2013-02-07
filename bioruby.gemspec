@@ -3,7 +3,7 @@
 # 
 Gem::Specification.new do |s|
   s.name = 'bio'
-  s.version = "1.4.2.5000"
+  s.version = "1.4.3.5000"
 
   s.author = "BioRuby project"
   s.email = "staff@bioruby.org"
@@ -14,6 +14,7 @@ Gem::Specification.new do |s|
 
   s.platform = Gem::Platform::RUBY
   s.files = [
+    ".travis.yml",
     "COPYING",
     "COPYING.ja",
     "ChangeLog",
@@ -32,15 +33,15 @@ Gem::Specification.new do |s|
     "bin/br_pmfetch.rb",
     "bioruby.gemspec",
     "bioruby.gemspec.erb",
+    "doc/ChangeLog-1.4.3",
     "doc/ChangeLog-before-1.3.1",
     "doc/ChangeLog-before-1.4.2",
     "doc/Changes-0.7.rd",
     "doc/Changes-1.3.rdoc",
-    "doc/KEGG_API.rd",
-    "doc/KEGG_API.rd.ja",
     "doc/RELEASE_NOTES-1.4.0.rdoc",
     "doc/RELEASE_NOTES-1.4.1.rdoc",
     "doc/RELEASE_NOTES-1.4.2.rdoc",
+    "doc/RELEASE_NOTES-1.4.3.rdoc",
     "doc/Tutorial.rd",
     "doc/Tutorial.rd.html",
     "doc/Tutorial.rd.ja",
@@ -48,6 +49,12 @@ Gem::Specification.new do |s|
     "doc/bioruby.css",
     "etc/bioinformatics/seqdatabase.ini",
     "extconf.rb",
+    "gemfiles/Gemfile.travis-jruby1.8",
+    "gemfiles/Gemfile.travis-jruby1.9",
+    "gemfiles/Gemfile.travis-ruby1.8",
+    "gemfiles/Gemfile.travis-ruby1.9",
+    "gemfiles/modify-Gemfile.rb",
+    "gemfiles/prepare-gemspec.rb",
     "lib/bio.rb",
     "lib/bio/alignment.rb",
     "lib/bio/appl/bl2seq/report.rb",
@@ -156,7 +163,6 @@ Gem::Specification.new do |s|
     "lib/bio/db/kegg/orthology.rb",
     "lib/bio/db/kegg/pathway.rb",
     "lib/bio/db/kegg/reaction.rb",
-    "lib/bio/db/kegg/taxonomy.rb",
     "lib/bio/db/lasergene.rb",
     "lib/bio/db/litdb.rb",
     "lib/bio/db/medline.rb",
@@ -188,11 +194,9 @@ Gem::Specification.new do |s|
     "lib/bio/io/biosql/biosql.rb",
     "lib/bio/io/biosql/config/database.yml",
     "lib/bio/io/das.rb",
-    "lib/bio/io/dbget.rb",
     "lib/bio/io/ddbjrest.rb",
     "lib/bio/io/ddbjxml.rb",
     "lib/bio/io/ebisoap.rb",
-    "lib/bio/io/ensembl.rb",
     "lib/bio/io/fastacmd.rb",
     "lib/bio/io/fetch.rb",
     "lib/bio/io/flatfile.rb",
@@ -204,9 +208,7 @@ Gem::Specification.new do |s|
     "lib/bio/io/flatfile/splitter.rb",
     "lib/bio/io/higet.rb",
     "lib/bio/io/hinv.rb",
-    "lib/bio/io/keggapi.rb",
     "lib/bio/io/ncbirest.rb",
-    "lib/bio/io/ncbisoap.rb",
     "lib/bio/io/pubmed.rb",
     "lib/bio/io/registry.rb",
     "lib/bio/io/soapwsdl.rb",
@@ -240,7 +242,6 @@ Gem::Specification.new do |s|
     "lib/bio/shell/plugin/emboss.rb",
     "lib/bio/shell/plugin/entry.rb",
     "lib/bio/shell/plugin/flatfile.rb",
-    "lib/bio/shell/plugin/keggapi.rb",
     "lib/bio/shell/plugin/midi.rb",
     "lib/bio/shell/plugin/ncbirest.rb",
     "lib/bio/shell/plugin/obda.rb",
@@ -269,6 +270,7 @@ Gem::Specification.new do |s|
     "lib/bio/shell/setup.rb",
     "lib/bio/shell/web.rb",
     "lib/bio/tree.rb",
+    "lib/bio/tree/output.rb",
     "lib/bio/util/color_scheme.rb",
     "lib/bio/util/color_scheme/buried.rb",
     "lib/bio/util/color_scheme/helix.rb",
@@ -309,7 +311,6 @@ Gem::Specification.new do |s|
     "sample/any2fasta.rb",
     "sample/biofetch.rb",
     "sample/color_scheme_na.rb",
-    "sample/dbget",
     "sample/demo_aaindex.rb",
     "sample/demo_aminoacid.rb",
     "sample/demo_bl2seq_report.rb",
@@ -330,8 +331,6 @@ Gem::Specification.new do |s|
     "sample/demo_kegg_glycan.rb",
     "sample/demo_kegg_orthology.rb",
     "sample/demo_kegg_reaction.rb",
-    "sample/demo_kegg_taxonomy.rb",
-    "sample/demo_keggapi.rb",
     "sample/demo_litdb.rb",
     "sample/demo_locations.rb",
     "sample/demo_ncbi_rest.rb",
@@ -364,7 +363,7 @@ Gem::Specification.new do |s|
     "sample/na2aa.rb",
     "sample/pmfetch.rb",
     "sample/pmsearch.rb",
-    "sample/psortplot_html.rb",
+    "sample/seqdatabase.ini",
     "sample/ssearch2tab.rb",
     "sample/tdiary.rb",
     "sample/test_phyloxml_big.rb",
@@ -392,6 +391,7 @@ Gem::Specification.new do |s|
     "test/data/KEGG/map00030.pathway",
     "test/data/KEGG/map00052.pathway",
     "test/data/KEGG/rn00250.pathway",
+    "test/data/KEGG/test.kgml",
     "test/data/SOSUI/sample.report",
     "test/data/TMHMM/sample.report",
     "test/data/aaindex/DAYM780301",
@@ -511,7 +511,6 @@ Gem::Specification.new do |s|
     "test/network/bio/appl/test_blast.rb",
     "test/network/bio/appl/test_pts1.rb",
     "test/network/bio/io/test_ddbjrest.rb",
-    "test/network/bio/io/test_ensembl.rb",
     "test/network/bio/io/test_pubmed.rb",
     "test/network/bio/io/test_soapwsdl.rb",
     "test/network/bio/io/test_togows.rb",
@@ -565,6 +564,7 @@ Gem::Specification.new do |s|
     "test/unit/bio/db/kegg/test_genes.rb",
     "test/unit/bio/db/kegg/test_genome.rb",
     "test/unit/bio/db/kegg/test_glycan.rb",
+    "test/unit/bio/db/kegg/test_kgml.rb",
     "test/unit/bio/db/kegg/test_module.rb",
     "test/unit/bio/db/kegg/test_orthology.rb",
     "test/unit/bio/db/kegg/test_pathway.rb",
@@ -593,7 +593,6 @@ Gem::Specification.new do |s|
     "test/unit/bio/io/flatfile/test_buffer.rb",
     "test/unit/bio/io/flatfile/test_splitter.rb",
     "test/unit/bio/io/test_ddbjxml.rb",
-    "test/unit/bio/io/test_ensembl.rb",
     "test/unit/bio/io/test_fastacmd.rb",
     "test/unit/bio/io/test_flatfile.rb",
     "test/unit/bio/io/test_soapwsdl.rb",
@@ -651,7 +650,8 @@ Gem::Specification.new do |s|
     "doc/Changes-1.3.rdoc",
     "doc/RELEASE_NOTES-1.4.0.rdoc",
     "doc/RELEASE_NOTES-1.4.1.rdoc",
-    "doc/RELEASE_NOTES-1.4.2.rdoc"
+    "doc/RELEASE_NOTES-1.4.2.rdoc",
+    "doc/RELEASE_NOTES-1.4.3.rdoc"
   ]
   s.rdoc_options << '--main' << 'README.rdoc'
   s.rdoc_options << '--title' << 'BioRuby API documentation'
@@ -659,7 +659,6 @@ Gem::Specification.new do |s|
   s.rdoc_options << '--line-numbers' << '--inline-source'
 
   s.require_path = 'lib'
-  s.autorequire = 'bio'
 
   s.bindir = "bin"
   s.executables = [

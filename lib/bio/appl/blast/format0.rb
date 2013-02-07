@@ -4,8 +4,6 @@
 # Copyright::  Copyright (C) 2003-2006 GOTO Naohisa <ng@bioruby.org>
 # License::    The Ruby License
 #
-# $Id:$
-#
 # == Description
 #
 # NCBI BLAST default (-m 0 option) output parser.
@@ -19,18 +17,15 @@
 # * http://www.ncbi.nlm.nih.gov/blast/ 
 #
 
-begin
-  require 'strscan'
-rescue LoadError
-end
+require 'strscan'
 require 'singleton'
 
-#--
-#require 'bio/db'
-#++
 require 'bio/io/flatfile'
 
 module Bio
+
+  require 'bio/appl/blast' unless const_defined?(:Blast)
+
   class Blast
     module Default #:nodoc:
 
@@ -72,19 +67,6 @@ module Bio
 
         # Returns whole entry as a string.
         def to_s; @entry; end
-
-        #:stopdoc:
-        # prevent using StringScanner_R (in old version of strscan)
-        if !defined?(StringScanner) then
-          def initialize(*arg)
-            raise 'couldn\'t load strscan.so'
-          end #def
-        elsif StringScanner.name == 'StringScanner_R' then
-          def initialize(*arg)
-            raise 'cannot use StringScanner_R'
-          end #def
-        end
-        #:startdoc:
 
         # Defines attributes which delegate to @f0dbstat objects.
         def self.delegate_to_f0dbstat(*names)
@@ -1142,31 +1124,31 @@ module Bio
                 while sc.rest?
                   #p pos_st, len_seq
                   #p nextline.to_s
-                  if r = sc.skip(/(Query|Sbjct)\: *(\d+) */) then
+                  if r = sc.skip(/Query\: *(\d+) */) then
                     pos_st = r
-                    qs = sc[1]
-                    pos1 = sc[2]
+                    pos1 = sc[1]
                     len_seq = sc.skip(/[^ ]*/)
                     seq = sc[0]
                     sc.skip(/ *(\d+) *\n/)
                     pos2 = sc[1]
-                    if qs == 'Query' then
-                      raise ScanError unless nextline == :q
-                      qpos1 = pos1.to_i unless qpos1
-                      qpos2 = pos2.to_i
-                      qseq << seq
-                      nextline = :m
-                    elsif qs == 'Sbjct' then
-                      if nextline == :m then
-                        mseq << (' ' * len_seq)
-                      end
-                      spos1 = pos1.to_i unless spos1
-                      spos2 = pos2.to_i
-                      sseq << seq
-                      nextline = :q
-                    else
-                      raise ScanError
+                    raise ScanError unless nextline == :q
+                    qpos1 = pos1.to_i unless qpos1
+                    qpos2 = pos2.to_i
+                    qseq << seq
+                    nextline = :m
+                  elsif r = sc.scan(/Sbjct\: *(\d+) *.+ +(\d+) *\n/) then
+                    pos1 = sc[1]
+                    pos2 = sc[2]
+                    raise ScanError unless pos_st
+                    raise ScanError unless len_seq
+                    seq = r[pos_st, len_seq]
+                    if nextline == :m then
+                      mseq << (' ' * len_seq)
                     end
+                    spos1 = pos1.to_i unless spos1
+                    spos2 = pos2.to_i
+                    sseq << seq
+                    nextline = :q
                   elsif r = sc.scan(/ {6}.+/) then
                     raise ScanError unless nextline == :m
                     mseq << r[pos_st, len_seq]
