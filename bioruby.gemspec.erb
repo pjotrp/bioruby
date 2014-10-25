@@ -55,10 +55,12 @@ Gem::Specification.new do |s|
       files =
         [ "README.rdoc", "README_DEV.rdoc", 
           "ChangeLog", "KNOWN_ISSUES.rdoc",
+          "RELEASE_NOTES.rdoc", 
           "Rakefile", "bioruby.gemspec.erb",
           "bioruby.gemspec", "setup.rb",
-          "extconf.rb", "rdoc.zsh"
-        ] + Dir.glob("{bin,doc,etc,lib,sample,test}/**/*").delete_if do |item|
+          "extconf.rb", "LEGAL",
+          "COPYING", "COPYING.ja", "GPL", "LGPL"
+        ] + Dir.glob("{bin,doc,etc,gemfiles,lib,sample,test}/**/*").delete_if do |item|
               case item
               when /(\A|\/)CVS(\z|\/)/, /(\A|\/)rdoc(\z|\/)/, /\~\z/
                 true
@@ -88,8 +90,8 @@ Gem::Specification.new do |s|
         def rdoc_files.add_file(name)
           self.push(name) unless self.include?(name)
         end
-        rdoc_files.add_file "ChangeLog"
-        rdoc_files.add_file "LEGAL"
+        #rdoc_files.add_file "ChangeLog"
+        #rdoc_files.add_file "LEGAL"
         rdoc_files.sort.collect { |x| x.dump }.join(",\n    ")
         ###### Above is executed in ERB environment ######
     %>
